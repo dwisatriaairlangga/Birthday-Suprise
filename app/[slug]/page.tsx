@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, use } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feather, Sparkles, Heart, Paperclip } from 'lucide-react';
+import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feather, Sparkles, Heart, Paperclip, Music } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 const themes = {
@@ -10,6 +10,16 @@ const themes = {
   ceria: { bg: 'bg-[#f0f8ff]', envelope: 'bg-[#add8e6]' },
   midnight: { bg: 'bg-[#0f172a]', envelope: 'bg-[#1e293b]' },
   forest: { bg: 'bg-[#f0fdf4]', envelope: 'bg-[#86efac]' },
+};
+
+const getEmbedData = (url: string) => {
+  if (!url) return null;
+  const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+  if (ytMatch && ytMatch[1]) return { type: 'youtube', url: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1` };
+  
+  const spotMatch = url.match(/spotify\.com\/(track|playlist)\/([a-zA-Z0-9]+)/);
+  if (spotMatch && spotMatch[1] && spotMatch[2]) return { type: 'spotify', url: `https://open.spotify.com/embed/${spotMatch[1]}/${spotMatch[2]}` };
+  return null;
 };
 
 // --- KOMPONEN VEKTOR BUNGA ---
@@ -47,6 +57,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
   const slug = resolvedParams.slug;
   const [data, setData] = useState<any>(null);
   const [stage, setStage] = useState<'envelope' | 'letter' | 'gift'>('envelope');
+  const [embed, setEmbed] = useState<{type: string, url: string} | null>(null);
   
   const [fallingFlowers, setFallingFlowers] = useState<{id: number, x: number, emoji: string}[]>([]);
   const [growingFlowers, setGrowingFlowers] = useState<{id: number, x: number, delay: number, type: 'tulip' | 'blossom', size: number}[]>([]);
@@ -55,6 +66,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
     const letters = JSON.parse(localStorage.getItem('letters') || '{}');
     if (letters[slug]) {
       setData(letters[slug]);
+      if (letters[slug].musicLink) setEmbed(getEmbedData(letters[slug].musicLink));
     } else {
       setData({ error: true });
     }
@@ -114,8 +126,6 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
 
   const activeTheme = themes[data.theme as keyof typeof themes] || themes.vintage;
   const isDarkScene = stage === 'gift' && data.giftType === 'bungaTumbuh';
-  
-  // Pisahkan konten surat menjadi paragraf
   const paragraphs = data.content ? data.content.split('\n').filter((p: string) => p.trim() !== '') : [];
 
   return (
@@ -155,8 +165,6 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
         {stage === 'envelope' && (
           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0, y: -50 }} className="flex flex-col items-center cursor-pointer z-20" onClick={() => setStage('letter')}>
             <div className={`w-64 h-48 ${activeTheme.envelope} rounded-lg shadow-xl relative flex items-center justify-center`}>
-              
-              {/* RENDER AKSESORIS AMPLOP (DIKEMBALIKAN!) */}
               <div className="absolute top-2 right-2 text-white/60 drop-shadow-md">
                 {data.accessory === 'waxseal' && <Droplet className="w-8 h-8 text-red-500/80" fill="currentColor" />}
                 {data.accessory === 'pita' && <Ribbon className="w-8 h-8" />}
@@ -168,7 +176,6 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                 {data.accessory === 'heart' && <Heart className="w-8 h-8 text-rose-500/80" fill="currentColor" />}
                 {data.accessory === 'paperclip' && <Paperclip className="w-8 h-8" />}
               </div>
-
               <MailOpen className="w-12 h-12 text-black/20" />
             </div>
             <p className="mt-8 font-serif text-lg text-gray-700 text-center">Buka Suratnya</p>
@@ -176,7 +183,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
         )}
       </AnimatePresence>
 
-      {/* TAHAP 2: SURAT (DIKEMBALIKAN DENGAN FOTO DAN WALL OF MESSAGES!) */}
+      {/* TAHAP 2: SURAT (FOTO DAN WALL OF MESSAGES) */}
       <AnimatePresence>
         {stage === 'letter' && (
           <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ x: -50, opacity: 0 }} className="max-w-xl w-full bg-white p-8 md:p-12 rounded-lg shadow-2xl z-20 overflow-y-auto max-h-[80vh]">
@@ -191,7 +198,6 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                     ))}
                   </p>
                   
-                  {/* FOTO KENANGAN */}
                   {data.photos && data.photos[i] && (
                     <motion.div variants={{ hidden: { opacity: 0, y: 20, rotate: 0 }, visible: { opacity: 1, y: 0, rotate: i % 2 === 0 ? 3 : -3 } }} className="mt-6 mx-auto bg-white p-3 shadow-md border border-gray-100 max-w-sm rounded-sm">
                       <img src={data.photos[i]} alt="Kenangan" className="w-full h-auto object-cover rounded-sm" />
@@ -207,7 +213,6 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
               <p className="font-serif text-2xl italic font-bold text-gray-800">{data.sender}</p>
             </div>
 
-            {/* WALL OF MESSAGES */}
             {data.wallMessages && data.wallMessages.length > 0 && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-12 bg-gray-50 p-6 rounded-xl border border-gray-100">
                 <h3 className="font-serif text-xl text-gray-800 mb-4 text-center">Pesan dari Teman-teman</h3>
@@ -241,6 +246,14 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* PEMUTAR MUSIK YOUTUBE/SPOTIFY */}
+      {embed && stage !== 'envelope' && (
+        <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="fixed bottom-4 right-4 z-50 shadow-2xl bg-white p-2 rounded-xl flex items-center">
+          <Music className="w-4 h-4 text-gray-500 mr-2 absolute left-4" />
+          <iframe src={embed.url} width={embed.type === 'spotify' ? "300" : "250"} height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media" loading="lazy" className="rounded-lg ml-6" />
+        </motion.div>
+      )}
     </main>
   );
 }

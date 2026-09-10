@@ -14,7 +14,6 @@ export default function CreateLetter() {
   const [shareUrl, setShareUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
-  // Handle Upload Foto ke Base64 (Maksimal 3 foto untuk mencegah limit localStorage)
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const files = Array.from(e.target.files).slice(0, 3 - formData.photos.length);
@@ -30,7 +29,6 @@ export default function CreateLetter() {
     });
   };
 
-  // Handle Multi-kontributor
   const addWallMessage = () => {
     setFormData(prev => ({ ...prev, wallMessages: [...prev.wallMessages, { name: '', message: '' }] }));
   };
@@ -56,10 +54,21 @@ export default function CreateLetter() {
     setIsSubmitted(true);
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(shareUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      const textArea = document.createElement("textarea");
+      textArea.value = shareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   return (
@@ -82,16 +91,15 @@ export default function CreateLetter() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Isi Surat Puitis (Gunakan 'Enter' untuk paragraf baru)</label>
-                <textarea required rows={5} placeholder="Paragraf 1...&#10;&#10;Paragraf 2..." className="w-full border-gray-300 rounded-md p-2 border" onChange={e => setFormData({...formData, content: e.target.value})} />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Isi Surat Puitis</label>
+                <textarea required rows={5} placeholder="Gunakan 'Enter' untuk paragraf baru..." className="w-full border-gray-300 rounded-md p-2 border" onChange={e => setFormData({...formData, content: e.target.value})} />
               </div>
 
-              {/* FITUR BARU: UPLOAD FOTO */}
+              {/* UPLOAD FOTO */}
               <div className="bg-[#f0f8ff] p-4 rounded-lg border border-[#add8e6] space-y-4">
                 <h3 className="font-serif text-lg text-gray-800 border-b border-[#add8e6] pb-2 flex items-center gap-2">
                   <ImagePlus className="w-5 h-5"/> Galeri Kenangan
                 </h3>
-                <p className="text-xs text-gray-600">Foto akan disisipkan di sela-sela paragraf surat. (Maksimal 3 foto untuk versi prototipe ini).</p>
                 <input type="file" accept="image/*" multiple onChange={handlePhotoUpload} disabled={formData.photos.length >= 3} className="text-sm" />
                 {formData.photos.length > 0 && (
                   <div className="flex gap-2 overflow-x-auto pt-2">
@@ -102,7 +110,7 @@ export default function CreateLetter() {
                 )}
               </div>
 
-              {/* FITUR BARU: WALL OF MESSAGES */}
+              {/* WALL OF MESSAGES */}
               <div className="bg-[#f0fdf4] p-4 rounded-lg border border-[#86efac] space-y-4">
                 <h3 className="font-serif text-lg text-gray-800 border-b border-[#86efac] pb-2">Pesan Teman (Multi-Kontributor)</h3>
                 {formData.wallMessages.map((msg, i) => (
@@ -119,35 +127,41 @@ export default function CreateLetter() {
                 </button>
               </div>
 
-              {/* Panel Personalisasi Tampilan (Sama seperti sebelumnya) */}
+              {/* PERSONALISASI */}
               <div className="bg-[#fdfbf7] p-4 rounded-lg border border-[#e8dcc7] space-y-4">
-                <h3 className="font-serif text-lg text-gray-800 border-b pb-2">Kustomisasi Tampilan & Suara</h3>
+                <h3 className="font-serif text-lg text-gray-800 border-b pb-2">Kustomisasi Tampilan</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Tema Warna</label>
                     <select className="w-full border-gray-300 rounded-md p-2 border" onChange={e => setFormData({...formData, theme: e.target.value})}>
-                      <option value="vintage">Kertas Vintage (Coklat Lembut)</option>
-                      <option value="romantis">Romantis (Pink Blush)</option>
-                      <option value="midnight">Midnight (Biru Dongker)</option>
-                      <option value="forest">Forest (Hijau Pinus)</option>
+                      <option value="vintage">Kertas Vintage</option>
+                      <option value="romantis">Romantis</option>
+                      <option value="midnight">Midnight (Biru Gelap)</option>
+                      <option value="forest">Forest</option>
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Aksesoris Amplop</label>
                     <select className="w-full border-gray-300 rounded-md p-2 border" onChange={e => setFormData({...formData, accessory: e.target.value})}>
-                      <option value="waxseal">Wax Seal (Stempel Lilin) 💧</option>
+                      <option value="waxseal">Wax Seal 💧</option>
                       <option value="pita">Pita Elegan 🎀</option>
                       <option value="bunga">Bunga Kering 🌸</option>
+                      <option value="prangko">Prangko Klasik 📮</option>
+                      <option value="kunci">Kunci Vintage 🗝️</option>
+                      <option value="feather">Bulu Pena 🪶</option>
+                      <option value="sparkles">Taburan Kilau ✨</option>
+                      <option value="heart">Stiker Hati ❤️</option>
+                      <option value="paperclip">Klip Kertas 📎</option>
                     </select>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Link Musik (YouTube/Spotify)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Link Musik (YouTube/Spotify) - Opsional</label>
                   <input type="text" className="w-full border-gray-300 rounded-md p-2 border" onChange={e => setFormData({...formData, musicLink: e.target.value})} />
                 </div>
               </div>
 
-              {/* Panel Hadiah */}
+              {/* HADIAH VIRTUAL */}
               <div className="bg-[#f9f5f0] p-4 rounded-lg border border-[#e8dcc7] space-y-4">
                 <h3 className="font-serif text-lg text-gray-800 border-b pb-2">Hadiah Virtual Akhir</h3>
                 <select className="w-full border-gray-300 rounded-md p-2 border" onChange={e => setFormData({...formData, giftType: e.target.value})}>
@@ -174,8 +188,10 @@ export default function CreateLetter() {
             </div>
 
             <div className="flex items-center w-full max-w-md bg-gray-50 border rounded-lg overflow-hidden mb-6">
-              <input type="text" readOnly value={shareUrl} className="flex-1 bg-transparent p-3 text-sm outline-none" />
-              <button onClick={copyToClipboard} className="bg-gray-800 text-white px-4 py-3"><Copy className="w-4 h-4"/></button>
+              <input type="text" readOnly value={shareUrl} className="flex-1 bg-transparent p-3 text-sm outline-none text-gray-600" />
+              <button onClick={copyToClipboard} className="flex items-center gap-2 bg-gray-800 text-white px-4 py-3 hover:bg-gray-700 transition-colors">
+                <Copy className="w-4 h-4"/> {copied ? 'Tersalin!' : 'Salin'}
+              </button>
             </div>
             
             <a href={shareUrl} target="_blank" className="text-[#a89575] hover:underline flex items-center gap-2 font-medium">
