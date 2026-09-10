@@ -43,14 +43,11 @@ export default function CreateLetter() {
     setFormData(prev => ({ ...prev, wallMessages: newMsgs }));
   };
 
-  // Pastikan kamu mengimpor supabase di baris paling atas file:
-  // import { supabase } from '@/lib/supabase';
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const slug = `untuk-${formData.receiver.toLowerCase().replace(/\s+/g, '-')}-${Math.random().toString(36).substring(2, 7)}`;
     
-    // Simpan data langsung ke Supabase
+    // SIMPAN KE SUPABASE
     const { error } = await supabase.from('letters').insert([
       {
         slug: slug,
@@ -68,8 +65,7 @@ export default function CreateLetter() {
     ]);
 
     if (error) {
-      alert("Gagal menyimpan surat ke database. Coba lagi!");
-      console.error(error);
+      alert("Gagal menyimpan surat: " + error.message);
       return;
     }
 

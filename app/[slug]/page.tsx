@@ -17,7 +17,6 @@ const getEmbedData = (url: string) => {
   if (!url) return null;
   const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
   if (ytMatch && ytMatch[1]) return { type: 'youtube', url: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1` };
-  
   const spotMatch = url.match(/spotify\.com\/(track|playlist)\/([a-zA-Z0-9]+)/);
   if (spotMatch && spotMatch[1] && spotMatch[2]) return { type: 'spotify', url: `https://open.spotify.com/embed/${spotMatch[1]}/${spotMatch[2]}` };
   return null;
@@ -59,13 +58,10 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
   const [data, setData] = useState<any>(null);
   const [stage, setStage] = useState<'envelope' | 'letter' | 'gift'>('envelope');
   const [embed, setEmbed] = useState<{type: string, url: string} | null>(null);
-  
   const [fallingFlowers, setFallingFlowers] = useState<{id: number, x: number, emoji: string}[]>([]);
   const [growingFlowers, setGrowingFlowers] = useState<{id: number, x: number, delay: number, type: 'tulip' | 'blossom', size: number}[]>([]);
 
- // Pastikan kamu mengimpor supabase di baris paling atas file:
-  // import { supabase } from '@/lib/supabase';
-
+  // MENGAMBIL DATA DARI SUPABASE
   useEffect(() => {
     async function fetchLetter() {
       const { data: dbData, error } = await supabase
@@ -77,7 +73,6 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
       if (error || !dbData) {
         setData({ error: true });
       } else {
-        // Pindahkan data dari database ke state aplikasi
         setData({
           sender: dbData.sender,
           receiver: dbData.receiver,
@@ -87,13 +82,12 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
           musicLink: dbData.music_link,
           giftType: dbData.gift_type,
           giftMessage: dbData.gift_message,
-          photos: dbData.photos,
-          wallMessages: dbData.wall_messages
+          photos: dbData.photos || [],
+          wallMessages: dbData.wall_messages || []
         });
         if (dbData.music_link) setEmbed(getEmbedData(dbData.music_link));
       }
     }
-    
     fetchLetter();
   }, [slug]);
 
@@ -223,6 +217,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                     ))}
                   </p>
                   
+                  {/* FOTO KENANGAN */}
                   {data.photos && data.photos[i] && (
                     <motion.div variants={{ hidden: { opacity: 0, y: 20, rotate: 0 }, visible: { opacity: 1, y: 0, rotate: i % 2 === 0 ? 3 : -3 } }} className="mt-6 mx-auto bg-white p-3 shadow-md border border-gray-100 max-w-sm rounded-sm">
                       <img src={data.photos[i]} alt="Kenangan" className="w-full h-auto object-cover rounded-sm" />
@@ -238,6 +233,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
               <p className="font-serif text-2xl italic font-bold text-gray-800">{data.sender}</p>
             </div>
 
+            {/* WALL OF MESSAGES */}
             {data.wallMessages && data.wallMessages.length > 0 && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-12 bg-gray-50 p-6 rounded-xl border border-gray-100">
                 <h3 className="font-serif text-xl text-gray-800 mb-4 text-center">Pesan dari Teman-teman</h3>
