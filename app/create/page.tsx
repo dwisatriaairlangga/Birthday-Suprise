@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Copy, CheckCircle2, ExternalLink, ImagePlus, Plus, Trash2 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function CreateLetter() {
   const [formData, setFormData] = useState({
@@ -42,12 +43,35 @@ export default function CreateLetter() {
     setFormData(prev => ({ ...prev, wallMessages: newMsgs }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Pastikan kamu mengimpor supabase di baris paling atas file:
+  // import { supabase } from '@/lib/supabase';
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const slug = `untuk-${formData.receiver.toLowerCase().replace(/\s+/g, '-')}-${Math.random().toString(36).substring(2, 7)}`;
-    const letters = JSON.parse(localStorage.getItem('letters') || '{}');
-    letters[slug] = formData;
-    localStorage.setItem('letters', JSON.stringify(letters));
+    
+    // Simpan data langsung ke Supabase
+    const { error } = await supabase.from('letters').insert([
+      {
+        slug: slug,
+        sender: formData.sender,
+        receiver: formData.receiver,
+        content: formData.content,
+        theme: formData.theme,
+        accessory: formData.accessory,
+        music_link: formData.musicLink,
+        gift_type: formData.giftType,
+        gift_message: formData.giftMessage,
+        photos: formData.photos,
+        wall_messages: formData.wallMessages
+      }
+    ]);
+
+    if (error) {
+      alert("Gagal menyimpan surat ke database. Coba lagi!");
+      console.error(error);
+      return;
+    }
 
     const url = `${window.location.origin}/${slug}`;
     setShareUrl(url);

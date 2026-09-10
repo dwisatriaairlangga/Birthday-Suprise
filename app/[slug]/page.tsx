@@ -3,6 +3,7 @@ import { useState, useEffect, use } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feather, Sparkles, Heart, Paperclip, Music } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { supabase } from '@/lib/supabase';
 
 const themes = {
   vintage: { bg: 'bg-[#fdfbf7]', envelope: 'bg-[#e8dcc7]' },
@@ -62,14 +63,38 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
   const [fallingFlowers, setFallingFlowers] = useState<{id: number, x: number, emoji: string}[]>([]);
   const [growingFlowers, setGrowingFlowers] = useState<{id: number, x: number, delay: number, type: 'tulip' | 'blossom', size: number}[]>([]);
 
+ // Pastikan kamu mengimpor supabase di baris paling atas file:
+  // import { supabase } from '@/lib/supabase';
+
   useEffect(() => {
-    const letters = JSON.parse(localStorage.getItem('letters') || '{}');
-    if (letters[slug]) {
-      setData(letters[slug]);
-      if (letters[slug].musicLink) setEmbed(getEmbedData(letters[slug].musicLink));
-    } else {
-      setData({ error: true });
+    async function fetchLetter() {
+      const { data: dbData, error } = await supabase
+        .from('letters')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+
+      if (error || !dbData) {
+        setData({ error: true });
+      } else {
+        // Pindahkan data dari database ke state aplikasi
+        setData({
+          sender: dbData.sender,
+          receiver: dbData.receiver,
+          content: dbData.content,
+          theme: dbData.theme,
+          accessory: dbData.accessory,
+          musicLink: dbData.music_link,
+          giftType: dbData.gift_type,
+          giftMessage: dbData.gift_message,
+          photos: dbData.photos,
+          wallMessages: dbData.wall_messages
+        });
+        if (dbData.music_link) setEmbed(getEmbedData(dbData.music_link));
+      }
     }
+    
+    fetchLetter();
   }, [slug]);
 
   const triggerGift = () => {
