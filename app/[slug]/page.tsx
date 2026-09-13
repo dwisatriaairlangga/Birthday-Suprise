@@ -5,16 +5,17 @@ import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feath
 import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 
+// Format Hex Murni
 const themes = {
-  dustyNavy: { bg: 'bg-[#DDAEB2]', envelope: 'bg-[#1A2E46]', text: 'text-white' },
-  oliveGold: { bg: 'bg-[#DDB24A]', envelope: 'bg-[#595F37]', text: 'text-white' },
-  plumCream: { bg: 'bg-[#F3E6D6]', envelope: 'bg-[#4F2C3A]', text: 'text-white' },
-  orangeTeal: { bg: 'bg-[#245D63]', envelope: 'bg-[#CA5B31]', text: 'text-white' },
-  forestSand: { bg: 'bg-[#EAE1CC]', envelope: 'bg-[#1D5139]', text: 'text-white' },
-  burgundyGold: { bg: 'bg-[#D3A95B]', envelope: 'bg-[#6C1226]', text: 'text-white' },
-  turquoiseCoral: { bg: 'bg-[#F27E6A]', envelope: 'bg-[#007F86]', text: 'text-white' },
-  lavenderSlate: { bg: 'bg-[#585966]', envelope: 'bg-[#C1A8C5]', text: 'text-gray-900' },
-  deepGreenBlush: { bg: 'bg-[#F1CAD0]', envelope: 'bg-[#0B4A31]', text: 'text-white' },
+  dustyNavy: { bg: '#DDAEB2', envelope: '#1A2E46', text: 'text-white' },
+  oliveGold: { bg: '#DDB24A', envelope: '#595F37', text: 'text-white' },
+  plumCream: { bg: '#F3E6D6', envelope: '#4F2C3A', text: 'text-white' },
+  orangeTeal: { bg: '#245D63', envelope: '#CA5B31', text: 'text-white' },
+  forestSand: { bg: '#EAE1CC', envelope: '#1D5139', text: 'text-white' },
+  burgundyGold: { bg: '#D3A95B', envelope: '#6C1226', text: 'text-white' },
+  turquoiseCoral: { bg: '#F27E6A', envelope: '#007F86', text: 'text-white' },
+  lavenderSlate: { bg: '#585966', envelope: '#C1A8C5', text: 'text-gray-900' },
+  deepGreenBlush: { bg: '#F1CAD0', envelope: '#0B4A31', text: 'text-white' },
 };
 
 const getEmbedData = (url: string) => {
@@ -90,8 +91,10 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
   const paragraphs = data.content ? data.content.split('\n').filter((p: string) => p.trim() !== '') : [];
 
   return (
-    // Tambahan pb-32 di akhir agar ada ruang kosong di bawah, mencegah tombol tertutup music player di HP
-    <main className={`min-h-screen ${isDarkScene ? 'bg-black' : activeTheme.bg} flex flex-col items-center justify-center p-4 md:p-8 relative overflow-x-hidden transition-colors duration-1000 py-10 md:py-16 pb-32 md:pb-24`}>
+    <main 
+      className={`min-h-screen flex flex-col items-center justify-center p-4 md:p-8 relative overflow-x-hidden transition-colors duration-1000 py-10 md:py-16 pb-32 md:pb-24 ${isDarkScene ? 'bg-black' : ''}`}
+      style={!isDarkScene ? { backgroundColor: activeTheme.bg } : {}}
+    >
       
       {/* SPOTLIGHT GELAP */}
       <AnimatePresence>
@@ -112,7 +115,10 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
       <AnimatePresence>
         {stage === 'envelope' && (
           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0, y: -50 }} className="flex flex-col items-center cursor-pointer z-20" onClick={() => setStage('letter')}>
-            <div className={`w-64 h-44 sm:w-72 sm:h-52 ${activeTheme.envelope} rounded-xl shadow-2xl relative flex items-center justify-center transition-transform hover:scale-105`}>
+            <div 
+              className="w-64 h-44 sm:w-72 sm:h-52 rounded-xl shadow-2xl relative flex items-center justify-center transition-transform hover:scale-105"
+              style={{ backgroundColor: activeTheme.envelope }}
+            >
               <div className="absolute top-2 right-2 sm:top-3 sm:right-3 text-white/60 drop-shadow-md">
                 {data.accessory === 'waxseal' && <Droplet className="w-7 h-7 sm:w-9 sm:h-9 text-red-500/80" fill="currentColor" />}
                 {data.accessory === 'pita' && <Ribbon className="w-7 h-7 sm:w-9 sm:h-9" />}
@@ -247,7 +253,6 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
         <motion.div 
           initial={{ y: 100, opacity: 0 }} 
           animate={{ y: 0, opacity: 1 }} 
-          // Posisi fix yang aman di tengah bawah pada Mobile, dan menepi ke kanan bawah di Desktop
           className="fixed bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-6 z-50 shadow-2xl bg-white/90 backdrop-blur-md p-2 rounded-2xl flex items-center justify-center w-full max-w-[90vw] md:max-w-[320px] border border-gray-100"
         >
           <Music className="w-4 h-4 text-gray-400 mr-2 absolute left-4 hidden md:block" />

@@ -4,17 +4,17 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Copy, CheckCircle2, ExternalLink, ImagePlus, Plus, Trash2, Eye } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
-// PALET WARNA (Digunakan untuk merubah background form secara real-time)
+// PALET WARNA (Format Hex murni agar 100% bekerja secara dinamis)
 const themes = {
-  dustyNavy: { bg: 'bg-[#DDAEB2]' },
-  oliveGold: { bg: 'bg-[#DDB24A]' },
-  plumCream: { bg: 'bg-[#F3E6D6]' },
-  orangeTeal: { bg: 'bg-[#245D63]' },
-  forestSand: { bg: 'bg-[#EAE1CC]' },
-  burgundyGold: { bg: 'bg-[#D3A95B]' },
-  turquoiseCoral: { bg: 'bg-[#F27E6A]' },
-  lavenderSlate: { bg: 'bg-[#585966]' },
-  deepGreenBlush: { bg: 'bg-[#F1CAD0]' },
+  dustyNavy: { bg: '#DDAEB2' },
+  oliveGold: { bg: '#DDB24A' },
+  plumCream: { bg: '#F3E6D6' },
+  orangeTeal: { bg: '#245D63' },
+  forestSand: { bg: '#EAE1CC' },
+  burgundyGold: { bg: '#D3A95B' },
+  turquoiseCoral: { bg: '#F27E6A' },
+  lavenderSlate: { bg: '#585966' },
+  deepGreenBlush: { bg: '#F1CAD0' },
 };
 
 export default function CreateLetter() {
@@ -87,12 +87,15 @@ export default function CreateLetter() {
     }
   };
 
+  // Mengambil kode Hex warna secara langsung
   const activeBg = themes[formData.theme as keyof typeof themes]?.bg || themes.plumCream.bg;
 
   return (
-    // Background utama akan bereaksi terhadap pilihan tema
-    <main className={`min-h-screen ${activeBg} py-8 px-4 md:py-12 flex justify-center items-center transition-colors duration-1000`}>
-      {/* Box Form dengan efek Glassmorphism yang elegan */}
+    // Menerapkan properti style={{ backgroundColor }} agar Tailwind tidak memblokir warnanya
+    <main 
+      className="min-h-screen py-8 px-4 md:py-12 flex justify-center items-center transition-colors duration-1000"
+      style={{ backgroundColor: activeBg }}
+    >
       <div className="max-w-2xl w-full bg-white/95 backdrop-blur-xl p-6 md:p-8 shadow-2xl rounded-3xl border border-white/40">
         {!isSubmitted ? (
           <>
