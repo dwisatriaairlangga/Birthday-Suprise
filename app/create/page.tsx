@@ -4,8 +4,9 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Copy, CheckCircle2, ExternalLink, ImagePlus, Plus, Trash2, Eye } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
-// PALET WARNA (Format Hex murni agar 100% bekerja secara dinamis)
+// PALET WARNA (Format Hex murni)
 const themes = {
+  scrapbookBlue: { bg: '#F2E8D9' }, // Tema baru sesuai gambar (Krem)
   dustyNavy: { bg: '#DDAEB2' },
   oliveGold: { bg: '#DDB24A' },
   plumCream: { bg: '#F3E6D6' },
@@ -20,9 +21,9 @@ const themes = {
 export default function CreateLetter() {
   const [formData, setFormData] = useState({
     sender: '', receiver: '', content: '', giftType: 'confetti',
-    theme: 'plumCream', accessory: 'pita', musicLink: '', giftMessage: '',
+    theme: 'scrapbookBlue', accessory: 'pita', musicLink: '', giftMessage: '',
     photos: [] as string[],
-    photoLayout: 'photobooth',
+    photoLayout: 'polaroid', // Default polaroid agar cocok dengan scrapbook
     wallMessages: [] as { name: string, message: string }[]
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -87,15 +88,10 @@ export default function CreateLetter() {
     }
   };
 
-  // Mengambil kode Hex warna secara langsung
-  const activeBg = themes[formData.theme as keyof typeof themes]?.bg || themes.plumCream.bg;
+  const activeBg = themes[formData.theme as keyof typeof themes]?.bg || themes.scrapbookBlue.bg;
 
   return (
-    // Menerapkan properti style={{ backgroundColor }} agar Tailwind tidak memblokir warnanya
-    <main 
-      className="min-h-screen py-8 px-4 md:py-12 flex justify-center items-center transition-colors duration-1000"
-      style={{ backgroundColor: activeBg }}
-    >
+    <main className="min-h-screen py-8 px-4 md:py-12 flex justify-center items-center transition-colors duration-1000" style={{ backgroundColor: activeBg }}>
       <div className="max-w-2xl w-full bg-white/95 backdrop-blur-xl p-6 md:p-8 shadow-2xl rounded-3xl border border-white/40">
         {!isSubmitted ? (
           <>
@@ -124,9 +120,9 @@ export default function CreateLetter() {
                   <h3 className="font-serif text-base md:text-lg text-gray-800 flex items-center gap-2">
                     <ImagePlus className="w-5 h-5"/> Galeri Foto
                   </h3>
-                  <select className="border-gray-200 rounded-lg p-2 border text-sm font-medium bg-white text-gray-700 outline-none w-full sm:w-auto" onChange={e => setFormData({...formData, photoLayout: e.target.value})} defaultValue="photobooth">
-                    <option value="photobooth">🎞️ Photobooth Strip</option>
+                  <select className="border-gray-200 rounded-lg p-2 border text-sm font-medium bg-white text-gray-700 outline-none w-full sm:w-auto" onChange={e => setFormData({...formData, photoLayout: e.target.value})} defaultValue="polaroid">
                     <option value="polaroid">📸 Gaya Polaroid</option>
+                    <option value="photobooth">🎞️ Photobooth Strip</option>
                     <option value="elegant">🖼️ Frame Elegan</option>
                     <option value="inline">📝 Sisip di Teks</option>
                   </select>
@@ -212,7 +208,8 @@ export default function CreateLetter() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Tema Warna</label>
-                    <select className="w-full bg-white border-gray-200 rounded-xl p-3 border outline-none focus:ring-2 focus:ring-gray-800" onChange={e => setFormData({...formData, theme: e.target.value})} defaultValue="plumCream">
+                    <select className="w-full bg-white border-gray-200 rounded-xl p-3 border outline-none focus:ring-2 focus:ring-gray-800" onChange={e => setFormData({...formData, theme: e.target.value})} defaultValue="scrapbookBlue">
+                      <option value="scrapbookBlue">Scrapbook Denim (Baru!)</option>
                       <option value="dustyNavy">Dusty Pink & Navy</option>
                       <option value="oliveGold">Olive & Gold</option>
                       <option value="plumCream">Plum & Cream</option>

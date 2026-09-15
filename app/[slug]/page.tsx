@@ -1,21 +1,22 @@
 'use client';
 import { useState, useEffect, use } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feather, Sparkles, Heart, Paperclip, Music } from 'lucide-react';
+import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feather, Sparkles, Heart, Paperclip, Music, Smile, Hash, Star } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 
-// Format Hex Murni
+// TEMA DENGAN ACCENT COLOR (Accent digunakan untuk warna gelombang awan)
 const themes = {
-  dustyNavy: { bg: '#DDAEB2', envelope: '#1A2E46', text: 'text-white' },
-  oliveGold: { bg: '#DDB24A', envelope: '#595F37', text: 'text-white' },
-  plumCream: { bg: '#F3E6D6', envelope: '#4F2C3A', text: 'text-white' },
-  orangeTeal: { bg: '#245D63', envelope: '#CA5B31', text: 'text-white' },
-  forestSand: { bg: '#EAE1CC', envelope: '#1D5139', text: 'text-white' },
-  burgundyGold: { bg: '#D3A95B', envelope: '#6C1226', text: 'text-white' },
-  turquoiseCoral: { bg: '#F27E6A', envelope: '#007F86', text: 'text-white' },
-  lavenderSlate: { bg: '#585966', envelope: '#C1A8C5', text: 'text-gray-900' },
-  deepGreenBlush: { bg: '#F1CAD0', envelope: '#0B4A31', text: 'text-white' },
+  scrapbookBlue: { bg: '#F2E8D9', envelope: '#5A80A6', text: 'text-white', accent: '#F29CB0' },
+  dustyNavy: { bg: '#DDAEB2', envelope: '#1A2E46', text: 'text-white', accent: '#DDB24A' },
+  oliveGold: { bg: '#DDB24A', envelope: '#595F37', text: 'text-white', accent: '#F3E6D6' },
+  plumCream: { bg: '#F3E6D6', envelope: '#4F2C3A', text: 'text-white', accent: '#DDAEB2' },
+  orangeTeal: { bg: '#245D63', envelope: '#CA5B31', text: 'text-white', accent: '#EAE1CC' },
+  forestSand: { bg: '#EAE1CC', envelope: '#1D5139', text: 'text-white', accent: '#D3A95B' },
+  burgundyGold: { bg: '#D3A95B', envelope: '#6C1226', text: 'text-white', accent: '#F2E8D9' },
+  turquoiseCoral: { bg: '#F27E6A', envelope: '#007F86', text: 'text-white', accent: '#F2E8D9' },
+  lavenderSlate: { bg: '#585966', envelope: '#C1A8C5', text: 'text-gray-900', accent: '#DDAEB2' },
+  deepGreenBlush: { bg: '#F1CAD0', envelope: '#0B4A31', text: 'text-white', accent: '#F2E8D9' },
 };
 
 const getEmbedData = (url: string) => {
@@ -27,6 +28,40 @@ const getEmbedData = (url: string) => {
   return null;
 };
 
+// --- KOMPONEN ORNAMEN SCRAPBOOK ---
+const WavyBottom = ({ accentColor }: { accentColor: string }) => (
+  <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+    <svg className="relative block w-[calc(100%+1.3px)] h-[35px] md:h-[50px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118,130.83,121.22,200.1,110.73,242.4,104.3,283.47,82.52,321.39,56.44Z" fill={accentColor} opacity="0.8"></path>
+      <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V120H0Z" fill="#ffffff" opacity="0.95"></path>
+    </svg>
+  </div>
+);
+
+const CutoutText = ({ text }: { text: string }) => {
+  const blockColors = ['bg-[#E67784]', 'bg-[#6D9F71]', 'bg-[#DFB063]', 'bg-[#6285A6]', 'bg-[#9878A3]', 'bg-[#D68A59]'];
+  return (
+    <div className="flex flex-wrap justify-center gap-1 mb-6 z-10 relative">
+      {text.split('').map((char, i) => (
+         char.trim() === '' ? <span key={i} className="w-3"></span> :
+         <span key={i} className={`${blockColors[i % blockColors.length]} text-white font-black text-lg md:text-xl px-2.5 py-1 rounded-sm shadow-md transform ${i % 2 === 0 ? 'rotate-[4deg]' : '-rotate-[5deg]'}`}>
+           {char.toUpperCase()}
+         </span>
+      ))}
+    </div>
+  )
+};
+
+const CardDoodles = () => (
+  <>
+    <Star className="absolute top-4 left-4 w-5 h-5 text-yellow-300 fill-yellow-300 opacity-90 rotate-12" />
+    <Smile className="absolute top-6 right-6 w-6 h-6 text-yellow-400 fill-yellow-100 opacity-90 -rotate-12" />
+    <div className="absolute bottom-16 right-6 text-xl opacity-70 text-white/50 font-bold rotate-12">#</div>
+    <div className="absolute top-1/2 left-3 text-xl opacity-70 text-white/40 -rotate-90">〰️</div>
+  </>
+);
+
+// ... (Vektor bunga bawaan tetap sama)
 function TulipVector({ className }: { className?: string }) { return (<svg viewBox="0 0 100 180" className={className} fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 180 C50 140 48 100 50 70" stroke="#4A7C39" strokeWidth="4" strokeLinecap="round" /><path d="M50 140 C30 130 10 110 5 90 C15 110 35 125 50 140 Z" fill="#5D9B47" /><path d="M50 120 C65 110 85 95 90 75 C80 95 65 110 50 120 Z" fill="#4A7C39" /><path d="M50 70 C30 65 25 35 40 20 C45 15 50 25 50 35 C50 25 55 15 60 20 C75 35 70 65 50 70 Z" fill="#FFB7C5" /><path d="M50 70 C38 60 35 38 45 25 C48 20 50 30 50 40 C50 30 52 20 55 25 C65 38 62 60 50 70 Z" fill="#FFA1B2" /></svg>); }
 function BlossomVector({ className }: { className?: string }) { return (<svg viewBox="0 0 120 120" className={className} fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M60 120 C60 100 58 80 60 70" stroke="#5D9B47" strokeWidth="4" strokeLinecap="round" /><circle cx="60" cy="45" r="22" fill="#FFC0CB" /><circle cx="40" cy="60" r="22" fill="#FFB6C1" /><circle cx="80" cy="60" r="22" fill="#FFB6C1" /><circle cx="48" cy="80" r="22" fill="#FFC0CB" /><circle cx="72" cy="80" r="22" fill="#FFC0CB" /><circle cx="60" cy="62" r="8" fill="#FFD700" /><circle cx="55" cy="58" r="2" fill="#FF69B4" /><circle cx="65" cy="58" r="2" fill="#FF69B4" /><circle cx="60" cy="68" r="2" fill="#FF69B4" /></svg>); }
 
@@ -49,7 +84,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
           sender: dbData.sender, receiver: dbData.receiver, content: dbData.content,
           theme: dbData.theme, accessory: dbData.accessory, musicLink: dbData.music_link,
           giftType: dbData.gift_type, giftMessage: dbData.gift_message,
-          photos: dbData.photos || [], photoLayout: dbData.photo_layout || 'inline', wallMessages: dbData.wall_messages || []
+          photos: dbData.photos || [], photoLayout: dbData.photo_layout || 'polaroid', wallMessages: dbData.wall_messages || []
         });
         if (dbData.music_link) setEmbed(getEmbedData(dbData.music_link));
       }
@@ -86,7 +121,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
   if (!data) return <div className="min-h-screen flex items-center justify-center bg-[#fdfbf7]">Memuat...</div>;
   if (data.error) return <div className="min-h-screen flex items-center justify-center text-lg md:text-xl px-4 text-center">Surat tidak ditemukan.</div>;
 
-  const activeTheme = themes[data.theme as keyof typeof themes] || themes.plumCream;
+  const activeTheme = themes[data.theme as keyof typeof themes] || themes.scrapbookBlue;
   const isDarkScene = stage === 'gift' && data.giftType === 'bungaTumbuh';
   const paragraphs = data.content ? data.content.split('\n').filter((p: string) => p.trim() !== '') : [];
 
@@ -96,7 +131,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
       style={!isDarkScene ? { backgroundColor: activeTheme.bg } : {}}
     >
       
-      {/* SPOTLIGHT GELAP */}
+      {/* SPOTLIGHT GELAP (Hadiah Vektor) */}
       <AnimatePresence>
         {isDarkScene && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2.5, delay: 0.5 }} className="fixed bottom-0 left-0 w-full h-[85vh] bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-yellow-100/35 via-amber-900/10 to-transparent pointer-events-none z-0" />
@@ -119,7 +154,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
               className="w-64 h-44 sm:w-72 sm:h-52 rounded-xl shadow-2xl relative flex items-center justify-center transition-transform hover:scale-105"
               style={{ backgroundColor: activeTheme.envelope }}
             >
-              <div className="absolute top-2 right-2 sm:top-3 sm:right-3 text-white/60 drop-shadow-md">
+              <div className="absolute top-2 right-2 sm:top-3 sm:right-3 text-white/60 drop-shadow-md z-10">
                 {data.accessory === 'waxseal' && <Droplet className="w-7 h-7 sm:w-9 sm:h-9 text-red-500/80" fill="currentColor" />}
                 {data.accessory === 'pita' && <Ribbon className="w-7 h-7 sm:w-9 sm:h-9" />}
                 {data.accessory === 'bunga' && <Flower2 className="w-7 h-7 sm:w-9 sm:h-9" />}
@@ -130,107 +165,114 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                 {data.accessory === 'heart' && <Heart className="w-7 h-7 sm:w-9 sm:h-9 text-rose-500/80" fill="currentColor" />}
                 {data.accessory === 'paperclip' && <Paperclip className="w-7 h-7 sm:w-9 sm:h-9" />}
               </div>
-              <MailOpen className={`w-10 h-10 sm:w-14 sm:h-14 ${activeTheme.text} opacity-40`} />
+              {/* Gelombang Awan di Amplop agar selaras dengan tema */}
+              <WavyBottom accentColor={activeTheme.accent} />
+              <MailOpen className={`w-10 h-10 sm:w-14 sm:h-14 ${activeTheme.text} opacity-40 z-10 relative`} />
             </div>
-            <p className={`mt-6 sm:mt-8 font-serif text-base sm:text-lg ${activeTheme.text} text-center font-medium animate-pulse mix-blend-difference`}>Ketuk untuk membuka</p>
+            <p className={`mt-6 sm:mt-8 font-serif text-base sm:text-lg ${activeTheme.text} text-center font-bold animate-pulse mix-blend-difference`}>Ketuk untuk membuka</p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* TAHAP 2: SURAT (FOTO & PESAN) */}
+      {/* TAHAP 2: SCRAPBOOK CARDS (Letter, Photos, Messages) */}
       <AnimatePresence>
         {stage === 'letter' && (
-          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ x: -50, opacity: 0 }} className="max-w-xl w-full bg-white p-6 sm:p-8 md:p-12 rounded-3xl shadow-2xl z-20 overflow-y-auto max-h-[75vh] md:max-h-[80vh] scrollbar-hide pb-10">
-            <h1 className="font-serif text-2xl md:text-3xl italic text-gray-800 mb-6">Untuk {data.receiver},</h1>
+          <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ x: -50, opacity: 0 }} className="w-full max-w-2xl flex flex-col gap-6 md:gap-8 z-20 pb-10">
             
-            <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.02 } } }}>
-              {paragraphs.map((para: string, i: number) => (
-                <div key={i} className="mb-5 md:mb-6">
-                  <p className="font-serif text-base md:text-lg leading-relaxed text-gray-700">
-                    {para.split('').map((char: string, j: number) => (
-                      <motion.span key={j} variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>{char}</motion.span>
-                    ))}
-                  </p>
-                  
-                  {/* FOTO INLINE */}
-                  {data.photoLayout === 'inline' && data.photos && data.photos[i] && (
-                    <motion.div variants={{ hidden: { opacity: 0, y: 20, rotate: 0 }, visible: { opacity: 1, y: 0, rotate: i % 2 === 0 ? 3 : -3 } }} className="mt-5 md:mt-6 mx-auto bg-white p-2 shadow-md border border-gray-100 max-w-xs rounded-sm">
-                      <img src={data.photos[i]} alt="Kenangan" className="w-full h-auto object-cover rounded-sm" />
-                    </motion.div>
+            {/* KARTU 1: ISI SURAT UTAMA */}
+            <div className="relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20" style={{ backgroundColor: activeTheme.envelope }}>
+              <CardDoodles />
+              <CutoutText text={`UNTUK ${data.receiver}`} />
+              
+              <div className="relative z-10">
+                {paragraphs.map((para: string, i: number) => (
+                  <div key={i} className="mb-4">
+                    <p className={`font-serif text-base md:text-lg leading-relaxed ${activeTheme.text} opacity-95 text-center drop-shadow-sm`}>
+                      {para}
+                    </p>
+                    
+                    {/* Foto Inline (Jika dipilih) */}
+                    {data.photoLayout === 'inline' && data.photos && data.photos[i] && (
+                      <div className={`mt-4 mx-auto bg-white p-2 shadow-lg max-w-[200px] transform ${i % 2 === 0 ? 'rotate-2' : '-rotate-3'} z-20 relative`}>
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-3 bg-white/40 shadow-sm border border-black/10 -rotate-2"></div>
+                        <img src={data.photos[i]} alt="Kenangan" className="w-full h-auto object-cover" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <WavyBottom accentColor={activeTheme.accent} />
+            </div>
+
+            {/* KARTU 2: GALERI FOTO (Khusus Layout Scrapbook) */}
+            {data.photos && data.photos.length > 0 && data.photoLayout !== 'inline' && (
+              <div className="relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20" style={{ backgroundColor: activeTheme.envelope }}>
+                <CardDoodles />
+                <CutoutText text="MEMORIES" />
+                
+                <div className="relative z-10 flex flex-col items-center mt-6">
+                  {data.photoLayout === 'photobooth' && (
+                    <div className="bg-white p-3 shadow-lg rounded-sm w-40 sm:w-48 flex flex-col gap-3 sm:gap-4 rotate-2">
+                      {data.photos.map((src: string, i: number) => (
+                        <img key={i} src={src} className="w-full aspect-[3/4] object-cover grayscale-[20%] contrast-110" alt="Memori" />
+                      ))}
+                      <p className="font-serif text-center text-[10px] sm:text-xs text-gray-500 mt-2 font-bold tracking-widest uppercase">{data.sender}</p>
+                    </div>
+                  )}
+
+                  {data.photoLayout === 'polaroid' && (
+                    <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+                      {data.photos.map((src: string, i: number) => (
+                        <div key={i} className={`bg-white p-3 pb-8 shadow-xl w-32 sm:w-40 ${i % 2 === 0 ? '-rotate-3' : 'rotate-3'} relative`}>
+                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-4 bg-white/50 shadow-sm border border-black/10 rotate-1"></div>
+                          <img src={src} className="w-full aspect-square object-cover" alt="Memori" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {data.photoLayout === 'elegant' && (
+                    <div className="flex flex-col gap-5 w-full items-center">
+                      {data.photos.map((src: string, i: number) => (
+                        <div key={i} className="p-2 bg-[#fdfbf7] border-4 border-[#a89575] shadow-md w-full max-w-[240px] rounded-sm">
+                          <img src={src} className="w-full h-auto object-cover" alt="Memori" />
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
-              ))}
-            </motion.div>
-            
-            {/* SISA FOTO INLINE */}
-            {data.photoLayout === 'inline' && data.photos && data.photos.length > paragraphs.length && (
-              <div className="mt-6 flex flex-col gap-6">
-                 {data.photos.slice(paragraphs.length).map((src: string, i: number) => (
-                    <div key={i} className={`mx-auto bg-white p-2 shadow-md border border-gray-100 max-w-xs rounded-sm transform ${i % 2 === 0 ? 'rotate-2' : '-rotate-2'}`}>
-                      <img src={src} alt="Kenangan" className="w-full h-auto object-cover rounded-sm" />
-                    </div>
-                 ))}
+                <WavyBottom accentColor={activeTheme.accent} />
               </div>
             )}
 
-            {/* RENDER LAYOUT PHOTOBOOTH / POLAROID / ELEGANT */}
-            {data.photos && data.photos.length > 0 && data.photoLayout !== 'inline' && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-8 pt-8 border-t border-gray-100 flex flex-col items-center">
-                
-                {data.photoLayout === 'photobooth' && (
-                  <div className="bg-white p-3 shadow-lg rounded-sm w-40 sm:w-48 flex flex-col gap-3 sm:gap-4 rotate-2">
-                    {data.photos.map((src: string, i: number) => (
-                      <img key={i} src={src} className="w-full aspect-[3/4] object-cover grayscale-[20%] contrast-110" alt="Memori" />
-                    ))}
-                    <p className="font-serif text-center text-[10px] sm:text-xs text-gray-500 mt-2 font-bold tracking-widest uppercase">{data.sender} & {data.receiver}</p>
-                  </div>
-                )}
-
-                {data.photoLayout === 'polaroid' && (
-                  <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-                    {data.photos.map((src: string, i: number) => (
-                      <div key={i} className={`bg-white p-3 pb-8 shadow-xl w-32 sm:w-40 ${i % 2 === 0 ? '-rotate-3' : 'rotate-3'} transition-transform hover:scale-105 hover:z-10`}>
-                        <img src={src} className="w-full aspect-square object-cover" alt="Memori" />
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {data.photoLayout === 'elegant' && (
-                  <div className="flex flex-col gap-5 w-full items-center">
-                    {data.photos.map((src: string, i: number) => (
-                      <div key={i} className="p-2 bg-[#fdfbf7] border-4 border-[#a89575] shadow-md w-full max-w-[240px] rounded-sm">
-                        <img src={src} className="w-full h-auto object-cover" alt="Memori" />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
-            )}
-
-            <div className="border-t border-gray-200 pt-5 md:pt-6 mt-8 md:mt-10">
-              <p className="font-serif text-base md:text-lg text-gray-800">Dengan segenap hati,</p>
-              <p className="font-serif text-xl md:text-2xl italic font-bold text-gray-800">{data.sender}</p>
-            </div>
-
-            {/* WALL OF MESSAGES */}
+            {/* KARTU 3: PESAN TEMAN */}
             {data.wallMessages && data.wallMessages.length > 0 && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-8 md:mt-12 bg-gray-50/80 p-5 md:p-6 rounded-2xl border border-gray-100">
-                <h3 className="font-serif text-lg md:text-xl text-gray-800 mb-4 text-center">Pesan dari Teman-teman</h3>
-                <div className="flex overflow-x-auto gap-4 pb-2 snap-x scrollbar-hide">
+              <div className="relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20" style={{ backgroundColor: activeTheme.envelope }}>
+                <CardDoodles />
+                <CutoutText text="FACTS" />
+                
+                <div className="relative z-10 flex flex-col gap-3 mt-4">
                   {data.wallMessages.map((msg: any, i: number) => (
-                    <div key={i} className="min-w-[200px] md:min-w-[220px] bg-white p-4 rounded-xl shadow-sm border snap-center shrink-0">
-                      <p className="text-gray-600 italic mb-3 text-sm">"{msg.message}"</p>
-                      <p className="font-bold text-xs md:text-sm text-right text-[#a89575]">- {msg.name}</p>
+                    <div key={i} className={`bg-white/95 p-4 rounded-xl shadow-md transform ${i % 2 === 0 ? 'rotate-1' : '-rotate-1'} border border-white/50`}>
+                      <p className="text-gray-700 font-serif italic mb-2 text-sm">"{msg.message}"</p>
+                      <p className="font-bold text-xs text-right text-gray-500">✨ {msg.name}</p>
                     </div>
                   ))}
                 </div>
-              </motion.div>
+                <WavyBottom accentColor={activeTheme.accent} />
+              </div>
             )}
 
-            <motion.button onClick={triggerGift} className="mt-8 md:mt-10 w-full bg-[#f4ebd9] text-[#8a795d] py-3.5 rounded-xl font-medium hover:bg-[#e8dcc7] transition-colors shadow-sm active:scale-[0.98]">
-              <Gift className="w-5 h-5 mr-2 inline" /> Buka Hadiah Virtual
-            </motion.button>
+            {/* KARTU 4: TOMBOL BUKA HADIAH & SENDER */}
+            <div className="relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20 text-center" style={{ backgroundColor: activeTheme.envelope }}>
+               <p className={`font-serif text-sm ${activeTheme.text} opacity-80 mb-1`}>Dari yang tersayang,</p>
+               <p className={`font-serif text-2xl font-black ${activeTheme.text} tracking-widest mb-8`}>{data.sender}</p>
+               <motion.button onClick={triggerGift} className="relative z-10 w-full sm:w-auto px-8 py-4 bg-white text-gray-800 rounded-full font-bold shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2 mx-auto">
+                 <Gift className="w-5 h-5 text-pink-500" /> Buka Kejutan
+               </motion.button>
+               <WavyBottom accentColor={activeTheme.accent} />
+            </div>
+
           </motion.div>
         )}
       </AnimatePresence>
@@ -238,17 +280,17 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
       {/* TAHAP 3: KARTU HADIAH */}
       <AnimatePresence>
         {stage === 'gift' && (
-          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2 }} className="max-w-md w-full mx-4 md:mx-0 bg-white/90 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl text-center z-30 relative mt-4">
-            <h2 className="font-serif text-2xl md:text-3xl text-gray-800 mb-3 md:mb-4">Kejutan Khusus Untukmu!</h2>
-            <p className="text-gray-600 mb-6 text-sm md:text-base">{data.giftMessage || "Kejutan manis untuk hari spesialmu!"}</p>
-            <button onClick={resetSurprise} className="mx-auto flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors bg-gray-100/80 border border-gray-200 px-5 py-2.5 rounded-full shadow-sm active:scale-95">
+          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2 }} className="max-w-md w-full mx-4 md:mx-0 bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-2xl text-center z-30 relative mt-4 border-4 border-white/40">
+            <h2 className="font-serif text-2xl md:text-3xl text-gray-800 mb-4 font-black">THANK YOU!</h2>
+            <p className="text-gray-600 mb-8 text-sm md:text-base font-serif italic">"{data.giftMessage || "Kejutan manis untuk hari spesialmu!"}"</p>
+            <button onClick={resetSurprise} className="mx-auto flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors bg-gray-100 border border-gray-200 px-6 py-3 rounded-full shadow-md active:scale-95 font-bold">
               <RefreshCcw className="w-4 h-4" /> Ulangi Kejutan
             </button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* PEMUTAR MUSIK YOUTUBE/SPOTIFY (Diatur ulang agar tidak mengganggu) */}
+      {/* PEMUTAR MUSIK YOUTUBE/SPOTIFY */}
       {embed && stage !== 'envelope' && (
         <motion.div 
           initial={{ y: 100, opacity: 0 }} 
