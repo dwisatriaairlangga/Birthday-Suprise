@@ -7,12 +7,9 @@ import { supabase } from '@/lib/supabase';
 
 // DAFTAR TEMA DENGAN DETAIL WARNA UNTUK VISUAL CARD
 const themes = {
-  // Tema Baru
   dalkomBlue: { name: 'Dalkom (Royal Blue)', bg: '#FCF1DD', preview: '#2945A8', badge: 'Baru ✨' },
   matchaPink: { name: 'Matcha (Green & Pink)', bg: '#FADADD', preview: '#7C9D70', badge: 'Baru ✨' },
   lilacBubblegum: { name: 'MiniMaisy (Lilac)', bg: '#FFC0CB', preview: '#C8A2C8', badge: 'Baru ✨' },
-  
-  // Tema Klasik
   scrapbookBlue: { name: 'Scrapbook Denim', bg: '#F2E8D9', preview: '#5A80A6', badge: 'Populer 🔥' },
   dustyNavy: { name: 'Dusty Pink & Navy', bg: '#DDAEB2', preview: '#1A2E46', badge: '' },
   oliveGold: { name: 'Olive & Gold', bg: '#DDB24A', preview: '#595F37', badge: '' },
@@ -75,7 +72,6 @@ export default function CreateLetter() {
     setFormData(prev => ({ ...prev, wallMessages: prev.wallMessages.filter((_, i) => i !== index) }));
   };
 
-  // Fungsi Playlist
   const addTrack = () => setFormData(prev => ({ ...prev, playlistTracks: [...prev.playlistTracks, { title: '', artist: '', url: '' }] }));
   const updateTrack = (index: number, field: 'title' | 'artist' | 'url', value: string) => {
     const newTracks = [...formData.playlistTracks];
@@ -88,7 +84,6 @@ export default function CreateLetter() {
     e.preventDefault();
     const slug = `untuk-${formData.receiver.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`;
     
-    // Filter track yang kosong
     const filteredTracks = formData.playlistTracks.filter(t => t.url.trim() !== '');
     const playlistData = filteredTracks.length > 0 ? { name: formData.playlistName, tracks: filteredTracks } : null;
 
@@ -145,8 +140,6 @@ export default function CreateLetter() {
             <h1 className="text-2xl md:text-3xl font-serif text-gray-800 text-center mb-8">Buat Surat Kejutan 💌</h1>
             
             <form onSubmit={handleSubmit} className="space-y-6">
-              
-              {/* IDENTITAS */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Pengirim (Kamu)</label>
