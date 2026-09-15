@@ -80,34 +80,27 @@ export default function CreateLetter() {
   };
   const removeTrack = (index: number) => setFormData(prev => ({ ...prev, playlistTracks: prev.playlistTracks.filter((_, i) => i !== index) }));
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const slug = `untuk-${formData.receiver.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`;
-    
+    const slug = `untuk-${formData.receiver.toLowerCase().replace(/\s+/g, '-')}-${Math.random().toString(36).substring(2, 7)}`;
     const filteredTracks = formData.playlistTracks.filter(t => t.url.trim() !== '');
-    const playlistData = filteredTracks.length > 0 ? { name: formData.playlistName, tracks: filteredTracks } : null;
+    const playlistData = filteredTracks.length > 0 ? { tracks: filteredTracks } : null;
 
     const { error } = await supabase.from('letters').insert([{
-      slug: slug, 
-      sender: formData.sender, 
-      receiver: formData.receiver, 
-      content: formData.content,
-      theme: formData.theme, 
-      accessory: formData.accessory, 
-      gift_type: formData.giftType, 
-      gift_message: formData.giftMessage,
-      photo_layout: formData.photoLayout, 
-      wall_messages: formData.wallMessages,
-      photos: formData.photos,
-      pin: formData.usePin && formData.pin ? formData.pin : null,
-      playlist: playlistData
+      slug: slug, sender: formData.sender, receiver: formData.receiver, content: formData.content,
+      theme: formData.theme, accessory: formData.accessory, gift_type: formData.giftType, gift_message: formData.giftMessage,
+      photo_layout: formData.photoLayout, wall_messages: formData.wallMessages, photos: formData.photos,
+      pin: formData.usePin && formData.pin ? formData.pin : null, playlist: playlistData
     }]);
 
-    if (error) { 
-      alert("Gagal menyimpan surat: " + error.message); 
-      return; 
-    }
+    if (error) { alert("Gagal menyimpan surat: " + error.message); return; }
     
+    // --- FITUR BARU: SIMPAN KE LOCAL STORAGE UNTUK DASHBOARD ---
+    const existingLetters = JSON.parse(localStorage.getItem('mySuratKejutan') || '[]');
+    existingLetters.push(slug);
+    localStorage.setItem('mySuratKejutan', JSON.stringify(existingLetters));
+    // -----------------------------------------------------------
+
     setShareUrl(`${window.location.origin}/${slug}`);
     setIsSubmitted(true);
   };
@@ -353,6 +346,15 @@ export default function CreateLetter() {
           </div>
         )}
       </div>
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-4 w-full max-w-md">
+              <a href={shareUrl} target="_blank" className="text-gray-500 hover:text-gray-800 hover:underline flex items-center gap-2 font-medium transition-colors">
+                Lihat Hasil <ExternalLink className="w-4 h-4" />
+              </a>
+              <span className="hidden sm:inline text-gray-300">|</span>
+              <a href="/dashboard" className="text-pink-500 hover:text-pink-600 hover:underline flex items-center gap-2 font-bold transition-colors">
+                Ke Dashboard Saya <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
     </main>
   );
 }

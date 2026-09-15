@@ -98,13 +98,19 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
         setLoadingScreen(false);
       } else {
         setData({
-          sender: dbData.sender, receiver: dbData.receiver, 
-          content: dbData.content, theme: dbData.theme, accessory: dbData.accessory, 
-          giftType: dbData.gift_type, giftMessage: dbData.gift_message,
-          photos: dbData.photos || [], photoLayout: dbData.photo_layout || 'polaroid',
+          sender: dbData.sender,
+          receiver: dbData.receiver,
+          content: dbData.content,
+          theme: dbData.theme,
+          accessory: dbData.accessory,
+          giftType: dbData.gift_type,
+          giftMessage: dbData.gift_message,
+          photos: dbData.photos || [],
+          photoLayout: dbData.photo_layout || 'polaroid',
           wallMessages: dbData.wall_messages || [],
           pin: dbData.pin,
-          playlist: dbData.playlist
+          playlist: dbData.playlist,
+          opened_at: dbData.opened_at // TAMBAHKAN INI
         });
 
         if (dbData.playlist && dbData.playlist.tracks && dbData.playlist.tracks.length > 0) {
@@ -135,8 +141,15 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
       setPinError(true);
       setTimeout(() => setPinError(false), 1000);
     }
+  
   };
-
+  const openEnvelope = async () => {
+    setStage('letter');
+    // Jika surat belum pernah dibuka sebelumnya, catat waktunya ke Supabase!
+    if (!data.opened_at) {
+      await supabase.from('letters').update({ opened_at: new Date().toISOString() }).eq('slug', slug);
+    }
+  };
   const downloadSurat = async () => {
     setIsDownloading(true);
     const element = document.getElementById('surat-content');
@@ -148,11 +161,11 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
 
     try {
       await new Promise(resolve => setTimeout(resolve, 600));
-      const canvas = await html2canvas(element, { 
-        useCORS: true, 
+      const canvas = await html2canvas(element, {
+        useCORS: true,
         allowTaint: true,
-        scale: 2, 
-        backgroundColor: themes[data.theme as keyof typeof themes].bg 
+        scale: 2, // Agar hasilnya HD
+        backgroundColor: themes[data.theme as keyof typeof themes].bg
       });
       const link = document.createElement('a');
       link.download = `Surat-Kejutan-${data.receiver}.png`;
@@ -238,7 +251,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
             {/* TAHAP 1: AMPLOP */}
             <AnimatePresence>
               {stage === 'envelope' && (
-                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ y: -100, opacity: 0, scale: 0.8 }} className="cursor-pointer text-center relative z-20 flex flex-col items-center group" onClick={() => setStage('letter')}>
+                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ y: -100, opacity: 0, scale: 0.8 }} className="cursor-pointer text-center relative z-20 flex flex-col items-center group" onClick={openEnvelope}>
                   <div className="w-64 h-44 sm:w-72 sm:h-52 rounded-xl shadow-2xl relative overflow-hidden flex items-center justify-center group-hover:-translate-y-2 transition-transform duration-300" style={{ backgroundColor: activeTheme.envelope }}>
                     <div className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white/40">
                       {data.accessory === 'waxseal' && <Droplet className="w-6 h-6 fill-red-800 text-red-900" />}
@@ -294,7 +307,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                           <div className="relative z-10 flex flex-col items-center gap-4">
                             {data.photos.map((src: string, i: number) => (
                               <div key={i} className="bg-white p-2 pb-6 shadow-md border border-gray-100 w-40 sm:w-48">
-                                <img src={src} alt="Foto" crossOrigin="anonymous" className="w-full aspect-square object-cover" />
+                                <img src={data.photos[i]} crossOrigin="anonymous" alt="Kenangan" className="..." />
                               </div>
                             ))}
                           </div>
