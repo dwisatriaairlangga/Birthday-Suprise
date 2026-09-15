@@ -137,7 +137,6 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
     }
   };
 
-  // Fungsi Download Surat Yang Telah Disederhanakan & Aman dari CORS
   const downloadSurat = async () => {
     setIsDownloading(true);
     const element = document.getElementById('surat-content');
@@ -260,12 +259,11 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
               )}
             </AnimatePresence>
 
-            {/* TAHAP 2: SCRAPBOOK CARDS (STRUKTUR VERTIKAL AMAN UNTUK HTML2CANVAS) */}
+            {/* TAHAP 2: SCRAPBOOK CARDS (LENGKAP DENGAN PLAYLIST) */}
             <AnimatePresence>
               {stage === 'letter' && (
                 <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="w-full max-w-lg mx-4 md:mx-0 space-y-6 relative z-20">
                   
-                  {/* Area yang akan di-download (id="surat-content") */}
                   <div id="surat-content" className="space-y-6 pb-6 pt-4 px-3 rounded-3xl" style={{ backgroundColor: activeTheme.bg }}>
                       
                       {/* KARTU 1: ISI SURAT UTAMA */}
@@ -304,7 +302,32 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                         </div>
                       )}
 
-                      {/* KARTU 3: PESAN TEMAN */}
+                      {/* KARTU 3: PLAYLIST MUSIK (YANG SEBELUMNYA KETINGGALAN) */}
+                      {data.playlist && data.playlist.tracks && data.playlist.tracks.length > 0 && (
+                        <div className="relative p-6 md:p-8 rounded-2xl shadow-xl overflow-hidden border border-black/5" style={{ backgroundColor: activeTheme.envelope }}>
+                          <CardDoodles />
+                          <CutoutText text="PLAYLIST" />
+                          <div className="relative z-10">
+                            <h4 className="text-white text-center font-serif text-xl mb-4 opacity-90">{data.playlist.name}</h4>
+                            <div className="bg-white/10 backdrop-blur-md rounded-xl p-2 space-y-2">
+                              {data.playlist.tracks.map((track: any, i: number) => (
+                                <div key={i} onClick={() => playTrack(i)} className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${currentTrackIndex === i ? 'bg-white/30 shadow-sm scale-[1.02]' : 'hover:bg-white/20'}`}>
+                                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                                    {currentTrackIndex === i ? <Music className="w-4 h-4 text-white animate-bounce" /> : <Play className="w-4 h-4 text-white opacity-70" />}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-white font-medium text-sm truncate">{track.title || `Track ${i+1}`}</p>
+                                    {track.artist && <p className="text-white/70 text-xs truncate">{track.artist}</p>}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <WavyBottom accentColor={activeTheme.accent} />
+                        </div>
+                      )}
+
+                      {/* KARTU 4: PESAN TEMAN */}
                       {data.wallMessages && data.wallMessages.length > 0 && (
                         <div className="relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden border border-black/5" style={{ backgroundColor: activeTheme.envelope }}>
                           <CardDoodles />
@@ -321,7 +344,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                         </div>
                       )}
 
-                      {/* KARTU 4: PENGIRIM */}
+                      {/* KARTU 5: PENGIRIM */}
                       <div className="relative p-6 md:p-8 rounded-2xl shadow-xl overflow-hidden text-center border border-black/5" style={{ backgroundColor: activeTheme.envelope }}>
                         <p className="font-serif text-sm text-white/80 uppercase tracking-widest mb-1">Tertanda,</p>
                         <p className="font-serif text-2xl font-black text-white tracking-wide drop-shadow-md">{data.sender}</p>
