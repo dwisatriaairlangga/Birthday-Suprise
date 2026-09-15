@@ -1,12 +1,14 @@
 'use client';
 import { useState, useEffect, use } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feather, Sparkles, Heart, Paperclip, Music, Smile, Hash, Star } from 'lucide-react';
+import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feather, Sparkles, Heart, Paperclip, Music, Smile, Star } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 
-// TEMA DENGAN ACCENT COLOR (Accent digunakan untuk warna gelombang awan)
 const themes = {
+  dalkomBlue: { bg: '#FCF1DD', envelope: '#2945A8', text: 'text-white', accent: '#F78660' },
+  matchaPink: { bg: '#FADADD', envelope: '#7C9D70', text: 'text-white', accent: '#FDF5C9' },
+  lilacBubblegum: { bg: '#FFC0CB', envelope: '#C8A2C8', text: 'text-white', accent: '#FFF0F5' },
   scrapbookBlue: { bg: '#F2E8D9', envelope: '#5A80A6', text: 'text-white', accent: '#F29CB0' },
   dustyNavy: { bg: '#DDAEB2', envelope: '#1A2E46', text: 'text-white', accent: '#DDB24A' },
   oliveGold: { bg: '#DDB24A', envelope: '#595F37', text: 'text-white', accent: '#F3E6D6' },
@@ -61,7 +63,6 @@ const CardDoodles = () => (
   </>
 );
 
-// ... (Vektor bunga bawaan tetap sama)
 function TulipVector({ className }: { className?: string }) { return (<svg viewBox="0 0 100 180" className={className} fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M50 180 C50 140 48 100 50 70" stroke="#4A7C39" strokeWidth="4" strokeLinecap="round" /><path d="M50 140 C30 130 10 110 5 90 C15 110 35 125 50 140 Z" fill="#5D9B47" /><path d="M50 120 C65 110 85 95 90 75 C80 95 65 110 50 120 Z" fill="#4A7C39" /><path d="M50 70 C30 65 25 35 40 20 C45 15 50 25 50 35 C50 25 55 15 60 20 C75 35 70 65 50 70 Z" fill="#FFB7C5" /><path d="M50 70 C38 60 35 38 45 25 C48 20 50 30 50 40 C50 30 52 20 55 25 C65 38 62 60 50 70 Z" fill="#FFA1B2" /></svg>); }
 function BlossomVector({ className }: { className?: string }) { return (<svg viewBox="0 0 120 120" className={className} fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M60 120 C60 100 58 80 60 70" stroke="#5D9B47" strokeWidth="4" strokeLinecap="round" /><circle cx="60" cy="45" r="22" fill="#FFC0CB" /><circle cx="40" cy="60" r="22" fill="#FFB6C1" /><circle cx="80" cy="60" r="22" fill="#FFB6C1" /><circle cx="48" cy="80" r="22" fill="#FFC0CB" /><circle cx="72" cy="80" r="22" fill="#FFC0CB" /><circle cx="60" cy="62" r="8" fill="#FFD700" /><circle cx="55" cy="58" r="2" fill="#FF69B4" /><circle cx="65" cy="58" r="2" fill="#FF69B4" /><circle cx="60" cy="68" r="2" fill="#FF69B4" /></svg>); }
 
@@ -131,7 +132,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
       style={!isDarkScene ? { backgroundColor: activeTheme.bg } : {}}
     >
       
-      {/* SPOTLIGHT GELAP (Hadiah Vektor) */}
+      {/* SPOTLIGHT GELAP */}
       <AnimatePresence>
         {isDarkScene && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2.5, delay: 0.5 }} className="fixed bottom-0 left-0 w-full h-[85vh] bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-yellow-100/35 via-amber-900/10 to-transparent pointer-events-none z-0" />
@@ -165,7 +166,6 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                 {data.accessory === 'heart' && <Heart className="w-7 h-7 sm:w-9 sm:h-9 text-rose-500/80" fill="currentColor" />}
                 {data.accessory === 'paperclip' && <Paperclip className="w-7 h-7 sm:w-9 sm:h-9" />}
               </div>
-              {/* Gelombang Awan di Amplop agar selaras dengan tema */}
               <WavyBottom accentColor={activeTheme.accent} />
               <MailOpen className={`w-10 h-10 sm:w-14 sm:h-14 ${activeTheme.text} opacity-40 z-10 relative`} />
             </div>
@@ -174,7 +174,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
         )}
       </AnimatePresence>
 
-      {/* TAHAP 2: SCRAPBOOK CARDS (Letter, Photos, Messages) */}
+      {/* TAHAP 2: SCRAPBOOK CARDS */}
       <AnimatePresence>
         {stage === 'letter' && (
           <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ x: -50, opacity: 0 }} className="w-full max-w-2xl flex flex-col gap-6 md:gap-8 z-20 pb-10">
@@ -204,7 +204,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
               <WavyBottom accentColor={activeTheme.accent} />
             </div>
 
-            {/* KARTU 2: GALERI FOTO (Khusus Layout Scrapbook) */}
+            {/* KARTU 2: GALERI FOTO */}
             {data.photos && data.photos.length > 0 && data.photoLayout !== 'inline' && (
               <div className="relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20" style={{ backgroundColor: activeTheme.envelope }}>
                 <CardDoodles />
@@ -277,15 +277,32 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
         )}
       </AnimatePresence>
 
-      {/* TAHAP 3: KARTU HADIAH */}
+      {/* TAHAP 3: KARTU HADIAH (Sekarang 100% Mengikuti Tema Scrapbook!) */}
       <AnimatePresence>
         {stage === 'gift' && (
-          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2 }} className="max-w-md w-full mx-4 md:mx-0 bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-3xl shadow-2xl text-center z-30 relative mt-4 border-4 border-white/40">
-            <h2 className="font-serif text-2xl md:text-3xl text-gray-800 mb-4 font-black">THANK YOU!</h2>
-            <p className="text-gray-600 mb-8 text-sm md:text-base font-serif italic">"{data.giftMessage || "Kejutan manis untuk hari spesialmu!"}"</p>
-            <button onClick={resetSurprise} className="mx-auto flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors bg-gray-100 border border-gray-200 px-6 py-3 rounded-full shadow-md active:scale-95 font-bold">
-              <RefreshCcw className="w-4 h-4" /> Ulangi Kejutan
-            </button>
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }} 
+            animate={{ scale: 1, opacity: 1 }} 
+            transition={{ delay: 2 }} 
+            className="w-full max-w-md mx-4 md:mx-0 relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20 text-center z-30 mt-4" 
+            style={{ backgroundColor: activeTheme.envelope }}
+          >
+            <CardDoodles />
+            <CutoutText text="SURPRISE" />
+            
+            <div className="relative z-10 flex flex-col items-center">
+              <p className={`font-serif text-lg md:text-xl italic ${activeTheme.text} mb-8 drop-shadow-sm font-medium`}>
+                "{data.giftMessage || "Kejutan manis untuk hari spesialmu!"}"
+              </p>
+              <button 
+                onClick={resetSurprise} 
+                className="mx-auto flex items-center justify-center gap-2 text-sm text-gray-800 transition-transform bg-white px-6 py-3 rounded-full shadow-xl hover:scale-105 active:scale-95 font-bold"
+              >
+                <RefreshCcw className="w-4 h-4" /> Ulangi Kejutan
+              </button>
+            </div>
+            
+            <WavyBottom accentColor={activeTheme.accent} />
           </motion.div>
         )}
       </AnimatePresence>
