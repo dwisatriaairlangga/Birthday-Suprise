@@ -1,29 +1,33 @@
 'use client';
 import { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Copy, CheckCircle2, ExternalLink, ImagePlus, Plus, Trash2, Eye } from 'lucide-react';
+import { Copy, CheckCircle2, ExternalLink, ImagePlus, Plus, Trash2, Eye, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
+// DAFTAR TEMA DENGAN DETAIL WARNA UNTUK VISUAL CARD
 const themes = {
-  dalkomBlue: { bg: '#FCF1DD' },
-  matchaPink: { bg: '#FADADD' },
-  lilacBubblegum: { bg: '#FFC0CB' },
-  scrapbookBlue: { bg: '#F2E8D9' }, 
-  dustyNavy: { bg: '#DDAEB2' },
-  oliveGold: { bg: '#DDB24A' },
-  plumCream: { bg: '#F3E6D6' },
-  orangeTeal: { bg: '#245D63' },
-  forestSand: { bg: '#EAE1CC' },
-  burgundyGold: { bg: '#D3A95B' },
-  turquoiseCoral: { bg: '#F27E6A' },
-  lavenderSlate: { bg: '#585966' },
-  deepGreenBlush: { bg: '#F1CAD0' },
+  // Tema Baru
+  dalkomBlue: { name: 'Dalkom (Royal Blue)', bg: '#FCF1DD', preview: '#2945A8', badge: 'Baru ✨' },
+  matchaPink: { name: 'Matcha (Green & Pink)', bg: '#FADADD', preview: '#7C9D70', badge: 'Baru ✨' },
+  lilacBubblegum: { name: 'MiniMaisy (Lilac)', bg: '#FFC0CB', preview: '#C8A2C8', badge: 'Baru ✨' },
+  
+  // Tema Klasik
+  scrapbookBlue: { name: 'Scrapbook Denim', bg: '#F2E8D9', preview: '#5A80A6', badge: 'Klasik' },
+  dustyNavy: { name: 'Dusty Pink & Navy', bg: '#DDAEB2', preview: '#1A2E46', badge: 'Klasik' },
+  oliveGold: { name: 'Olive & Gold', bg: '#DDB24A', preview: '#595F37', badge: 'Klasik' },
+  plumCream: { name: 'Plum & Cream', bg: '#F3E6D6', preview: '#4F2C3A', badge: 'Klasik' },
+  orangeTeal: { name: 'Burnt Orange & Teal', bg: '#245D63', preview: '#CA5B31', badge: 'Klasik' },
+  forestSand: { name: 'Forest Green & Sand', bg: '#EAE1CC', preview: '#1D5139', badge: 'Klasik' },
+  burgundyGold: { name: 'Burgundy & Gold', bg: '#D3A95B', preview: '#6C1226', badge: 'Klasik' },
+  turquoiseCoral: { name: 'Turquoise & Coral', bg: '#F27E6A', preview: '#007F86', badge: 'Klasik' },
+  lavenderSlate: { name: 'Lavender & Slate', bg: '#585966', preview: '#C1A8C5', badge: 'Klasik' },
+  deepGreenBlush: { name: 'Deep Green & Blush', bg: '#F1CAD0', preview: '#0B4A31', badge: 'Klasik' },
 };
 
 export default function CreateLetter() {
   const [formData, setFormData] = useState({
     sender: '', receiver: '', content: '', giftType: 'confetti',
-    theme: 'scrapbookBlue', accessory: 'pita', musicLink: '', giftMessage: '',
+    theme: 'dalkomBlue', accessory: 'pita', musicLink: '', giftMessage: '',
     photos: [] as string[],
     photoLayout: 'polaroid',
     wallMessages: [] as { name: string, message: string }[]
@@ -90,7 +94,7 @@ export default function CreateLetter() {
     }
   };
 
-  const activeBg = themes[formData.theme as keyof typeof themes]?.bg || themes.scrapbookBlue.bg;
+  const activeBg = themes[formData.theme as keyof typeof themes]?.bg || themes.dalkomBlue.bg;
 
   return (
     <main className="min-h-screen py-8 px-4 md:py-12 flex justify-center items-center transition-colors duration-1000" style={{ backgroundColor: activeBg }}>
@@ -116,6 +120,7 @@ export default function CreateLetter() {
                 <textarea required rows={5} placeholder="Gunakan 'Enter' untuk paragraf baru..." className="w-full bg-white/80 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-[#a89575] outline-none transition-shadow" onChange={e => setFormData({...formData, content: e.target.value})} />
               </div>
 
+              {/* UPLOAD FOTO & PREVIEW LAYOUT */}
               <div className="bg-white/60 p-4 md:p-5 rounded-2xl border border-gray-200 space-y-4">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-gray-200 pb-3">
                   <h3 className="font-serif text-base md:text-lg text-gray-800 flex items-center gap-2">
@@ -185,6 +190,7 @@ export default function CreateLetter() {
                 )}
               </div>
 
+              {/* WALL OF MESSAGES */}
               <div className="bg-white/60 p-4 md:p-5 rounded-2xl border border-gray-200 space-y-4">
                 <h3 className="font-serif text-base md:text-lg text-gray-800 border-b border-gray-200 pb-2">Pesan Teman (Multi-Kontributor)</h3>
                 {formData.wallMessages.map((msg, i) => (
@@ -201,31 +207,43 @@ export default function CreateLetter() {
                 </button>
               </div>
 
+              {/* PERSONALISASI (DENGAN VISUAL THEME CARDS YANG MUDAH DIKENALI) */}
               <div className="bg-white/60 p-4 md:p-5 rounded-2xl border border-gray-200 space-y-4">
-                <h3 className="font-serif text-base md:text-lg text-gray-800 border-b border-gray-200 pb-2">Kustomisasi Tampilan & Suara</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Tema Warna</label>
-                    <select className="w-full bg-white border-gray-200 rounded-xl p-3 border outline-none focus:ring-2 focus:ring-gray-800" onChange={e => setFormData({...formData, theme: e.target.value})} defaultValue="scrapbookBlue">
-                      <optgroup label="Tema Baru ✨">
-                        <option value="dalkomBlue">Dalkom (Royal Blue & Peach)</option>
-                        <option value="matchaPink">Matcha (Green & Pastel Pink)</option>
-                        <option value="lilacBubblegum">MiniMaisy (Lilac & Pink)</option>
-                      </optgroup>
-                      <optgroup label="Tema Klasik 🎨">
-                        <option value="scrapbookBlue">Scrapbook Denim</option>
-                        <option value="dustyNavy">Dusty Pink & Navy</option>
-                        <option value="oliveGold">Olive & Gold</option>
-                        <option value="plumCream">Plum & Cream</option>
-                        <option value="orangeTeal">Burnt Orange & Teal</option>
-                        <option value="forestSand">Forest Green & Sand</option>
-                        <option value="burgundyGold">Burgundy & Gold</option>
-                        <option value="turquoiseCoral">Turquoise & Coral</option>
-                        <option value="lavenderSlate">Lavender & Slate</option>
-                        <option value="deepGreenBlush">Deep Green & Blush</option>
-                      </optgroup>
-                    </select>
+                <h3 className="font-serif text-base md:text-lg text-gray-800 border-b border-gray-200 pb-2">Pilih Tema & Tampilan</h3>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Tema Warna (Klik untuk memilih)</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-1">
+                    {Object.entries(themes).map(([key, t]) => (
+                      <div
+                        key={key}
+                        onClick={() => setFormData({...formData, theme: key})}
+                        className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                          formData.theme === key 
+                            ? 'border-gray-900 bg-white shadow-md scale-[1.02]' 
+                            : 'border-white/80 bg-white/70 hover:bg-white hover:border-gray-300'
+                        }`}
+                      >
+                        {/* Lingkaran Preview Warna */}
+                        <div 
+                          className="w-8 h-8 rounded-full border border-black/10 shrink-0 shadow-inner flex items-center justify-center"
+                          style={{ backgroundColor: t.preview }}
+                        >
+                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: t.bg }}></div>
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-800 truncate">{t.name}</p>
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${t.badge.includes('Baru') ? 'bg-pink-100 text-pink-600' : 'bg-gray-100 text-gray-500'}`}>
+                            {t.badge}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Aksesoris Amplop</label>
                     <select className="w-full bg-white border-gray-200 rounded-xl p-3 border outline-none focus:ring-2 focus:ring-gray-800" onChange={e => setFormData({...formData, accessory: e.target.value})}>
@@ -240,13 +258,14 @@ export default function CreateLetter() {
                       <option value="paperclip">Klip Kertas 📎</option>
                     </select>
                   </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Link Musik (YouTube/Spotify) - Opsional</label>
-                  <input type="text" placeholder="https://..." className="w-full bg-white border-gray-200 rounded-xl p-3 border outline-none focus:ring-2 focus:ring-gray-800" onChange={e => setFormData({...formData, musicLink: e.target.value})} />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Link Musik (YouTube/Spotify)</label>
+                    <input type="text" placeholder="https://..." className="w-full bg-white border-gray-200 rounded-xl p-3 border outline-none focus:ring-2 focus:ring-gray-800" onChange={e => setFormData({...formData, musicLink: e.target.value})} />
+                  </div>
                 </div>
               </div>
 
+              {/* HADIAH VIRTUAL */}
               <div className="bg-white/60 p-4 md:p-5 rounded-2xl border border-gray-200 space-y-4">
                 <h3 className="font-serif text-base md:text-lg text-gray-800 border-b border-gray-200 pb-2">Hadiah Virtual Akhir</h3>
                 <select className="w-full bg-white border-gray-200 rounded-xl p-3 border outline-none focus:ring-2 focus:ring-gray-800" onChange={e => setFormData({...formData, giftType: e.target.value})}>
