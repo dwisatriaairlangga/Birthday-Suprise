@@ -345,7 +345,10 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
         return (
           <div 
             key={track.id}
-            onClick={() => setCurrentTrack(track)}
+            onClick={() => {
+  alert("Tombol lagu berhasil dipencet!"); 
+  setCurrentTrack(track);
+}}
             // Desain list yang lebih responsif saat diklik
             className={`flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all duration-300 ${
               isPlaying 
