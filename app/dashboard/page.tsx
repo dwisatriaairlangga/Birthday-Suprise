@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Mail, Clock, CheckCircle2, Trash2, ExternalLink, ArrowLeft, Send, Plus } from 'lucide-react';
+import { Mail, Clock, CheckCircle2, Trash2, ExternalLink, Send, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Dashboard() {
@@ -14,7 +14,6 @@ export default function Dashboard() {
 
   const fetchMyLetters = async () => {
     setLoading(true);
-    // Ambil daftar slug yang tersimpan di memori browser pengirim
     const savedSlugs = JSON.parse(localStorage.getItem('mySuratKejutan') || '[]');
     
     if (savedSlugs.length === 0) {
@@ -23,7 +22,6 @@ export default function Dashboard() {
       return;
     }
 
-    // Ambil data surat-surat tersebut dari Supabase
     const { data, error } = await supabase
       .from('letters')
       .select('slug, receiver, created_at, opened_at, theme')
@@ -37,18 +35,15 @@ export default function Dashboard() {
   };
 
   const deleteLetter = async (slug: string) => {
-    const confirmDelete = confirm("Yakin ingin menghapus surat ini selamanya?");
+    const confirmDelete = window.confirm("Yakin ingin menghapus surat ini selamanya?");
     if (!confirmDelete) return;
 
-    // Hapus dari Supabase
     await supabase.from('letters').delete().eq('slug', slug);
     
-    // Hapus dari Local Storage
     const savedSlugs = JSON.parse(localStorage.getItem('mySuratKejutan') || '[]');
     const newSlugs = savedSlugs.filter((s: string) => s !== slug);
     localStorage.setItem('mySuratKejutan', JSON.stringify(newSlugs));
     
-    // Perbarui Tampilan
     setLetters(letters.filter(l => l.slug !== slug));
   };
 
@@ -129,7 +124,7 @@ export default function Dashboard() {
                   </div>
 
                   <div className="flex gap-2 pt-4 border-t border-gray-100">
-                    <a href={`/${letter.slug}`} target="_blank" className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors text-sm">
+                    <a href={`/${letter.slug}`} target="_blank" rel="noopener noreferrer" className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors text-sm">
                       <ExternalLink className="w-4 h-4" /> Buka
                     </a>
                     <button onClick={() => deleteLetter(letter.slug)} className="bg-red-50 hover:bg-red-100 text-red-600 p-2.5 rounded-xl transition-colors">
