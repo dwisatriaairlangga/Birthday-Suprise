@@ -315,17 +315,23 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                       </div>
                     )}
                   </div>
-                  {/* ================================================== */}
-                            {/* MULTI-PLATFORM MUSIC PLAYER */}
-                  {/* ================================================== */}
-                      {playlist.length > 0 && currentTrack && (
-                     <div className="bg-[#121212] p-4 rounded-3xl shadow-lg text-white mt-6 relative z-10">
-                          <h3 className="font-bold text-lg mb-3 px-2">🎵 Playlist Spesial Untukmu</h3>
+     {/* ================================================== */}
+{/* UI MUSIC PLAYER (AUTO TEMA + ANTI DEMPET + CLICKABLE) */}
+{/* ================================================== */}
+{playlist.length > 0 && currentTrack && (
+  <div 
+    // my-10 memberikan jarak atas bawah agar tidak dempet dengan Buka Kejutan Akhir
+    // z-50 dan pointer-events-auto memaksa elemen ini berada di paling depan dan bisa diklik
+    // bg-white/20 dan backdrop-blur menciptakan efek kaca yang otomatis mengikuti warna TEMA!
+    className="relative z-50 pointer-events-auto my-10 p-5 rounded-3xl shadow-xl bg-white/20 backdrop-blur-md border border-white/30"
+  >
+    <h3 className="font-bold text-lg mb-4 px-2 text-gray-800 drop-shadow-sm">
+      🎵 Playlist Spesial Untukmu
+    </h3>
     
-                      {/* Layar Iframe untuk memutar lagu */}
-         <div className="mb-4 w-full h-[160px] rounded-xl overflow-hidden shadow-md bg-black">
-           <iframe 
-           key={currentTrack.id}
+    <div className="mb-4 w-full h-[160px] rounded-xl overflow-hidden shadow-lg bg-black/40">
+      <iframe 
+        key={currentTrack.id} // Wajib ada agar lagu berganti saat diklik
         src={currentTrack.embedUrl} 
         width="100%" height="100%" frameBorder="0" 
         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
@@ -333,28 +339,35 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
       ></iframe>
     </div>
 
-    {/* Daftar Lagu (Bisa diklik untuk ganti lagu) */}
-    <div className="space-y-1">
+    <div className="space-y-2">
       {playlist.map((track, index) => {
         const isPlaying = currentTrack.id === track.id;
         return (
           <div 
             key={track.id}
             onClick={() => setCurrentTrack(track)}
-            className={`flex items-center gap-4 p-2 rounded-lg cursor-pointer transition-colors duration-200 ${isPlaying ? 'bg-white/10' : 'hover:bg-white/5'}`}
+            // Desain list yang lebih responsif saat diklik
+            className={`flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all duration-300 ${
+              isPlaying 
+                ? 'bg-white/60 shadow-md scale-[1.02]' 
+                : 'bg-white/30 hover:bg-white/50 hover:scale-[1.01]'
+            }`}
           >
-            {/* Indikator Play / Nomor Lagu */}
-            <span className={`w-4 text-center text-sm font-medium ${isPlaying ? 'text-green-500' : 'text-gray-400'}`}>
+            <span className={`w-6 text-center font-bold ${isPlaying ? 'text-pink-600' : 'text-gray-600'}`}>
               {isPlaying ? '▶' : index + 1}
             </span>
             
-            {/* Gambar Cover */}
-            <img src={track.cover || 'https://via.placeholder.com/150'} alt={track.title} className="w-12 h-12 rounded object-cover shadow bg-gray-800" />
+            <img 
+              src={track.cover || 'https://via.placeholder.com/150'} 
+              alt={track.title} 
+              className="w-14 h-14 rounded-lg object-cover shadow-sm bg-gray-200" 
+            />
             
-            {/* Info Judul & Artis */}
             <div className="flex-1 overflow-hidden">
-              <p className={`font-semibold truncate ${isPlaying ? 'text-green-500' : 'text-gray-100'}`}>{track.title}</p>
-              <p className="text-sm text-gray-400 truncate">{track.artist}</p>
+              <p className={`font-bold truncate ${isPlaying ? 'text-gray-900' : 'text-gray-700'}`}>
+                {track.title}
+              </p>
+              <p className="text-xs text-gray-600 truncate font-medium">{track.artist}</p>
             </div>
           </div>
         );
