@@ -1,13 +1,14 @@
 'use client';
 import { useState, useEffect, use } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feather, Sparkles, Heart, Paperclip, Copy, Music, Smile, Star, Lock } from 'lucide-react';
+import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feather, Sparkles, Heart, Paperclip, Music, Smile, Star, Lock, Copy } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import html2canvas from 'html2canvas';
 import { supabase } from '@/lib/supabase';
 
 // TEMA DENGAN ACCENT COLOR
 const themes = {
+  secretBoxPurple: { name: 'Secret Box (Purple)', bg: '#F8E1E1', envelope: '#6A417B', text: 'text-white', accent: '#D5558B' },
   dalkomBlue: { bg: '#FCF1DD', envelope: '#2945A8', text: 'text-white', accent: '#F78660' },
   matchaPink: { bg: '#FADADD', envelope: '#7C9D70', text: 'text-white', accent: '#FDF5C9' },
   lilacBubblegum: { bg: '#FFC0CB', envelope: '#C8A2C8', text: 'text-white', accent: '#FFF0F5' },
@@ -23,7 +24,6 @@ const themes = {
   deepGreenBlush: { bg: '#F1CAD0', envelope: '#0B4A31', text: 'text-white', accent: '#F2E8D9' },
 };
 
-// DETEKSI URL MUSIK MULTI-PLATFORM
 const getEmbedData = (url: string) => {
   if (!url) return null;
   const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
@@ -37,7 +37,6 @@ const getEmbedData = (url: string) => {
   return null;
 };
 
-// KOMPONEN ORNAMEN SCRAPBOOK
 const WavyBottom = ({ accentColor }: { accentColor: string }) => (
   <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
     <svg className="relative block w-[calc(100%+1.3px)] h-[35px] md:h-[50px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -102,7 +101,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
           theme: dbData.theme, accessory: dbData.accessory, giftType: dbData.gift_type,
           giftMessage: dbData.gift_message, photos: dbData.photos || [], photoLayout: dbData.photo_layout || 'polaroid',
           wallMessages: dbData.wall_messages || [], pin: dbData.pin, playlist: dbData.playlist,
-          opened_at: dbData.opened_at // History buka
+          opened_at: dbData.opened_at
         });
         if (dbData.playlist && dbData.playlist.tracks && dbData.playlist.tracks.length > 0) {
           setEmbed(getEmbedData(dbData.playlist.tracks[0].url));
@@ -131,7 +130,6 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
     }
   };
 
-  // UPDATE READ RECEIPT KE SUPABASE
   const openEnvelope = async () => {
     setStage('letter');
     if (!data.opened_at) {
@@ -240,27 +238,72 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
             {stage === 'gift' && data.giftType === 'bunga' && (<div className="fixed inset-0 pointer-events-none z-50">{fallingFlowers.map((flower) => (<motion.div key={flower.id} className="absolute text-3xl md:text-4xl" initial={{ left: `${flower.x}%`, top: '-10%', opacity: 1, rotate: 0 }} animate={{ top: '110%', opacity: 0, rotate: 360 }} transition={{ duration: Math.random() * 3 + 3, delay: Math.random() * 2, repeat: Infinity }}>{flower.emoji}</motion.div>))}</div>)}
             {isDarkScene && (<div className="fixed bottom-0 left-0 w-full h-full pointer-events-none z-10">{growingFlowers.map((flower) => (<motion.div key={flower.id} className="absolute origin-bottom drop-shadow-2xl" style={{ left: `${flower.x}%`, bottom: '-15px', width: `${flower.size}px`, height: `${flower.size * 1.4}px` }} initial={{ y: 250, opacity: 0, scale: 0.2, filter: 'brightness(0.3)' }} animate={{ y: -(Math.random() * 30 + 10), opacity: 1, scale: 1, filter: 'brightness(1.15)' }} transition={{ duration: 2, delay: flower.delay, type: 'spring', bounce: 0.35 }}>{flower.type === 'tulip' ? <TulipVector className="w-full h-full" /> : <BlossomVector className="w-full h-full" />}</motion.div>))}</div>)}
 
-            {/* TAHAP 1: AMPLOP */}
+            {/* TAHAP 1: AMPLOP ATAU SECRET BOX */}
             <AnimatePresence>
               {stage === 'envelope' && (
-                <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0, y: -50 }} className="flex flex-col items-center cursor-pointer z-20" onClick={openEnvelope}>
-                  <div className="w-64 h-44 sm:w-72 sm:h-52 rounded-xl shadow-2xl relative flex items-center justify-center transition-transform hover:scale-105" style={{ backgroundColor: activeTheme.envelope }}>
-                    <div className="absolute top-2 right-2 sm:top-3 sm:right-3 text-white/60 drop-shadow-md z-10">
-                      {data.accessory === 'waxseal' && <Droplet className="w-7 h-7 sm:w-9 sm:h-9 text-red-500/80" fill="currentColor" />}
-                      {data.accessory === 'pita' && <Ribbon className="w-7 h-7 sm:w-9 sm:h-9" />}
-                      {data.accessory === 'bunga' && <Flower2 className="w-7 h-7 sm:w-9 sm:h-9" />}
-                      {data.accessory === 'prangko' && <Stamp className="w-7 h-7 sm:w-9 sm:h-9" />}
-                      {data.accessory === 'kunci' && <Key className="w-7 h-7 sm:w-9 sm:h-9 text-yellow-600/80" />}
-                      {data.accessory === 'feather' && <Feather className="w-7 h-7 sm:w-9 sm:h-9" />}
-                      {data.accessory === 'sparkles' && <Sparkles className="w-7 h-7 sm:w-9 sm:h-9 text-yellow-400" />}
-                      {data.accessory === 'heart' && <Heart className="w-7 h-7 sm:w-9 sm:h-9 text-rose-500/80" fill="currentColor" />}
-                      {data.accessory === 'paperclip' && <Paperclip className="w-7 h-7 sm:w-9 sm:h-9" />}
-                    </div>
-                    <WavyBottom accentColor={activeTheme.accent} />
-                    <MailOpen className={`w-10 h-10 sm:w-14 sm:h-14 ${activeTheme.text} opacity-40 z-10 relative`} />
-                  </div>
-                  <p className={`mt-6 sm:mt-8 font-serif text-base sm:text-lg ${activeTheme.text} text-center font-bold animate-pulse mix-blend-difference`}>Ketuk untuk membuka</p>
-                </motion.div>
+                <>
+                  {data.theme === 'secretBoxPurple' ? (
+                    // TAMPILAN KHUSUS: SECRET BOX UNGU 3D-ish
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0, y: -50 }} className="flex flex-col items-center cursor-pointer z-20 group" onClick={openEnvelope}>
+                      <div className="relative w-64 h-56 sm:w-72 sm:h-64 flex items-end justify-center transition-transform hover:scale-105">
+                        
+                        {/* Glow/Shadow belakang kotak */}
+                        <div className="absolute bottom-0 w-48 h-10 bg-black/20 blur-xl rounded-full"></div>
+
+                        {/* Interior kotak (Kertas surat yang menyembul) */}
+                        <div className="absolute bottom-16 w-52 sm:w-60 h-28 bg-[#3E234A] rounded-t-md z-0 overflow-hidden flex items-end justify-center">
+                           <div className="w-40 h-20 bg-white/95 rounded-t-md translate-y-4 group-hover:translate-y-1 transition-transform duration-500 shadow-inner">
+                             <div className="w-full h-4 border-b-2 border-dashed border-gray-300 mt-2"></div>
+                           </div>
+                        </div>
+
+                        {/* Tutup Kotak (Lid) - Terbuka saat hover */}
+                        <div className="absolute top-6 sm:top-8 w-60 sm:w-68 h-20 sm:h-24 bg-[#7F5192] rounded-sm shadow-2xl z-20 transition-all duration-700 group-hover:-translate-y-12 group-hover:-rotate-3 flex flex-col items-center justify-center border-b-8 border-[#4B2A59]">
+                           <Sparkles className="w-6 h-6 text-pink-300 absolute top-2 right-2 opacity-50" />
+                           <span className="text-white font-serif font-black text-2xl tracking-widest opacity-90 drop-shadow-md">Secret Box</span>
+                        </div>
+
+                        {/* Dasar Kotak */}
+                        <div className="w-56 sm:w-64 h-32 sm:h-36 bg-[#6A417B] rounded-b-xl shadow-xl relative z-10 flex items-center justify-center border-t-4 border-[#5A3568]">
+                          <Heart className="w-10 h-10 text-white/10" />
+                          <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 text-white/60 drop-shadow-md z-10">
+                            {/* Mempertahankan Aksesoris Pengirim Jika Ada */}
+                            {data.accessory === 'waxseal' && <Droplet className="w-7 h-7 text-red-400" fill="currentColor" />}
+                            {data.accessory === 'pita' && <Ribbon className="w-7 h-7 text-pink-300" />}
+                            {data.accessory === 'bunga' && <Flower2 className="w-7 h-7" />}
+                            {data.accessory === 'prangko' && <Stamp className="w-7 h-7" />}
+                            {data.accessory === 'kunci' && <Key className="w-7 h-7 text-yellow-400" />}
+                            {data.accessory === 'feather' && <Feather className="w-7 h-7" />}
+                            {data.accessory === 'sparkles' && <Sparkles className="w-7 h-7 text-yellow-300" />}
+                            {data.accessory === 'heart' && <Heart className="w-7 h-7 text-rose-400" fill="currentColor" />}
+                            {data.accessory === 'paperclip' && <Paperclip className="w-7 h-7" />}
+                          </div>
+                        </div>
+                      </div>
+                      <p className={`mt-6 sm:mt-8 font-serif text-base sm:text-lg text-purple-900 text-center font-bold animate-pulse mix-blend-difference`}>Ketuk untuk membuka</p>
+                    </motion.div>
+                  ) : (
+                    // TAMPILAN KLASIK: AMPLOP BIASA UNTUK TEMA LAINNYA
+                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0, y: -50 }} className="flex flex-col items-center cursor-pointer z-20 group" onClick={openEnvelope}>
+                      <div className="w-64 h-44 sm:w-72 sm:h-52 rounded-xl shadow-2xl relative flex items-center justify-center transition-transform group-hover:scale-105" style={{ backgroundColor: activeTheme.envelope }}>
+                        <div className="absolute top-2 right-2 sm:top-3 sm:right-3 text-white/60 drop-shadow-md z-10">
+                          {data.accessory === 'waxseal' && <Droplet className="w-7 h-7 sm:w-9 sm:h-9 text-red-500/80" fill="currentColor" />}
+                          {data.accessory === 'pita' && <Ribbon className="w-7 h-7 sm:w-9 sm:h-9" />}
+                          {data.accessory === 'bunga' && <Flower2 className="w-7 h-7 sm:w-9 sm:h-9" />}
+                          {data.accessory === 'prangko' && <Stamp className="w-7 h-7 sm:w-9 sm:h-9" />}
+                          {data.accessory === 'kunci' && <Key className="w-7 h-7 sm:w-9 sm:h-9 text-yellow-600/80" />}
+                          {data.accessory === 'feather' && <Feather className="w-7 h-7 sm:w-9 sm:h-9" />}
+                          {data.accessory === 'sparkles' && <Sparkles className="w-7 h-7 sm:w-9 sm:h-9 text-yellow-400" />}
+                          {data.accessory === 'heart' && <Heart className="w-7 h-7 sm:w-9 sm:h-9 text-rose-500/80" fill="currentColor" />}
+                          {data.accessory === 'paperclip' && <Paperclip className="w-7 h-7 sm:w-9 sm:h-9" />}
+                        </div>
+                        <WavyBottom accentColor={activeTheme.accent} />
+                        <MailOpen className={`w-10 h-10 sm:w-14 sm:h-14 ${activeTheme.text} opacity-40 z-10 relative`} />
+                      </div>
+                      <p className={`mt-6 sm:mt-8 font-serif text-base sm:text-lg ${activeTheme.text} text-center font-bold animate-pulse mix-blend-difference`}>Ketuk untuk membuka</p>
+                    </motion.div>
+                  )}
+                </>
               )}
             </AnimatePresence>
 

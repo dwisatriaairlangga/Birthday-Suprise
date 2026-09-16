@@ -6,9 +6,13 @@ import { supabase } from '@/lib/supabase';
 
 // DAFTAR TEMA DENGAN DETAIL WARNA UNTUK VISUAL CARD
 const themes = {
+  // Tema Baru (Secret Box)
+  secretBoxPurple: { name: 'Secret Box (Purple)', bg: '#F8E1E1', preview: '#6A417B', badge: 'Kotak 🎁' },
+  // Tema Baru
   dalkomBlue: { name: 'Dalkom (Royal Blue)', bg: '#FCF1DD', preview: '#2945A8', badge: 'Baru ✨' },
   matchaPink: { name: 'Matcha (Green & Pink)', bg: '#FADADD', preview: '#7C9D70', badge: 'Baru ✨' },
   lilacBubblegum: { name: 'MiniMaisy (Lilac)', bg: '#FFC0CB', preview: '#C8A2C8', badge: 'Baru ✨' },
+  // Tema Klasik
   scrapbookBlue: { name: 'Scrapbook Denim', bg: '#F2E8D9', preview: '#5A80A6', badge: 'Klasik' },
   dustyNavy: { name: 'Dusty Pink & Navy', bg: '#DDAEB2', preview: '#1A2E46', badge: 'Klasik' },
   oliveGold: { name: 'Olive & Gold', bg: '#DDB24A', preview: '#595F37', badge: 'Klasik' },
@@ -24,7 +28,7 @@ const themes = {
 export default function CreateLetter() {
   const [formData, setFormData] = useState({
     sender: '', receiver: '', content: '', giftType: 'confetti',
-    theme: 'dalkomBlue', accessory: 'pita', giftMessage: '',
+    theme: 'secretBoxPurple', accessory: 'pita', giftMessage: '',
     photos: [] as string[],
     photoLayout: 'polaroid',
     wallMessages: [] as { name: string, message: string }[],
@@ -103,6 +107,7 @@ export default function CreateLetter() {
   };
 
   const activeBg = themes[formData.theme as keyof typeof themes]?.bg || themes.dalkomBlue.bg;
+  const activePreviewColor = themes[formData.theme as keyof typeof themes]?.preview || '#000000';
 
   return (
     <main className="min-h-screen py-8 px-4 md:py-12 flex justify-center items-center transition-colors duration-1000" style={{ backgroundColor: activeBg }}>
@@ -113,20 +118,11 @@ export default function CreateLetter() {
             <form onSubmit={handleSubmit} className="space-y-6">
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Dari (Pengirim)</label>
-                  <input required type="text" className="w-full bg-white/80 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-[#a89575] outline-none transition-shadow" onChange={e => setFormData({...formData, sender: e.target.value})} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Untuk (Penerima)</label>
-                  <input required type="text" className="w-full bg-white/80 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-[#a89575] outline-none transition-shadow" onChange={e => setFormData({...formData, receiver: e.target.value})} />
-                </div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-1">Dari (Pengirim)</label><input required type="text" className="w-full bg-white/80 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-[#a89575] outline-none transition-shadow" onChange={e => setFormData({...formData, sender: e.target.value})} /></div>
+                <div><label className="block text-sm font-medium text-gray-700 mb-1">Untuk (Penerima)</label><input required type="text" className="w-full bg-white/80 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-[#a89575] outline-none transition-shadow" onChange={e => setFormData({...formData, receiver: e.target.value})} /></div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Isi Surat Puitis</label>
-                <textarea required rows={5} placeholder="Gunakan 'Enter' untuk paragraf baru..." className="w-full bg-white/80 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-[#a89575] outline-none transition-shadow" onChange={e => setFormData({...formData, content: e.target.value})} />
-              </div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-1">Isi Surat Puitis</label><textarea required rows={5} placeholder="Gunakan 'Enter' untuk paragraf baru..." className="w-full bg-white/80 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-[#a89575] outline-none transition-shadow" onChange={e => setFormData({...formData, content: e.target.value})} /></div>
 
               {/* UPLOAD FOTO & PREVIEW LAYOUT */}
               <div className="bg-white/60 p-4 md:p-5 rounded-2xl border border-gray-200 space-y-4">
@@ -142,50 +138,15 @@ export default function CreateLetter() {
                 <input type="file" accept="image/*" multiple onChange={handlePhotoUpload} disabled={formData.photos.length >= 4} className="text-sm w-full file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-800 file:text-white hover:file:bg-gray-700 cursor-pointer transition-colors" />
                 <p className="text-xs text-gray-500 mt-1">Maksimal 4 foto.</p>
 
+                {/* PREVIEW GALERI DINAMIS MENGIKUTI WARNA TEMA */}
                 {formData.photos.length > 0 && (
-                  <div className="mt-4 pt-4 border-t border-gray-200 bg-black/5 p-4 rounded-xl flex flex-col items-center overflow-hidden">
-                    <div className="flex items-center gap-2 mb-4 text-gray-600 text-sm font-medium"><Eye className="w-4 h-4"/> Preview Layout</div>
+                  <div className="mt-6 p-6 rounded-2xl flex flex-col items-center overflow-hidden transition-colors shadow-xl border border-white/20 relative" style={{ backgroundColor: activePreviewColor }}>
+                    <div className="flex items-center gap-2 mb-6 text-white/95 text-xs sm:text-sm font-bold tracking-widest uppercase bg-black/20 px-4 py-1.5 rounded-full z-10"><Eye className="w-4 h-4"/> Preview Tema: {themes[formData.theme as keyof typeof themes]?.name.split(' ')[0]}</div>
                     
-                    {formData.photoLayout === 'photobooth' && (
-                      <div className="bg-white p-3 shadow-lg rounded-sm w-32 flex flex-col gap-2 rotate-2">
-                        {formData.photos.map((src, i) => (
-                          <div key={i} className="relative group">
-                            <img src={src} className="w-full aspect-[3/4] object-cover bg-gray-100" alt="Preview"/>
-                            <button type="button" onClick={() => removePhoto(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-3 h-3"/></button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {formData.photoLayout === 'polaroid' && (
-                      <div className="flex flex-wrap justify-center gap-4">
-                        {formData.photos.map((src, i) => (
-                          <div key={i} className={`bg-white p-2 pb-6 shadow-md w-28 relative group ${i % 2 === 0 ? '-rotate-3' : 'rotate-3'}`}>
-                            <img src={src} className="w-full aspect-square object-cover bg-gray-100" alt="Preview"/>
-                            <button type="button" onClick={() => removePhoto(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-3 h-3"/></button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {formData.photoLayout === 'elegant' && (
-                      <div className="flex flex-col gap-3">
-                        {formData.photos.map((src, i) => (
-                          <div key={i} className="p-1.5 bg-[#fdfbf7] border-2 border-[#a89575] shadow-sm w-36 relative group">
-                            <img src={src} className="w-full aspect-auto object-cover" alt="Preview"/>
-                            <button type="button" onClick={() => removePhoto(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-3 h-3"/></button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    {formData.photoLayout === 'inline' && (
-                      <div className="flex gap-2 overflow-x-auto w-full pb-2">
-                        {formData.photos.map((src, i) => (
-                          <div key={i} className="relative group shrink-0">
-                            <img src={src} className="h-16 w-16 object-cover rounded shadow" alt="Preview"/>
-                            <button type="button" onClick={() => removePhoto(i)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-3 h-3"/></button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {formData.photoLayout === 'photobooth' && (<div className="bg-white p-3 shadow-xl rounded-sm w-32 flex flex-col gap-2 rotate-2 relative z-10">{formData.photos.map((src, i) => (<div key={i} className="relative group"><img src={src} className="w-full aspect-[3/4] object-cover bg-gray-100" alt="Preview"/><button type="button" onClick={() => removePhoto(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-3 h-3"/></button></div>))}</div>)}
+                    {formData.photoLayout === 'polaroid' && (<div className="flex flex-wrap justify-center gap-4 relative z-10">{formData.photos.map((src, i) => (<div key={i} className={`bg-white p-2 pb-6 shadow-xl w-28 relative group ${i % 2 === 0 ? '-rotate-3' : 'rotate-3'}`}><div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-3 bg-white/50 shadow-sm border border-black/10 rotate-1"></div><img src={src} className="w-full aspect-square object-cover bg-gray-100" alt="Preview"/><button type="button" onClick={() => removePhoto(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-3 h-3"/></button></div>))}</div>)}
+                    {formData.photoLayout === 'elegant' && (<div className="flex flex-col gap-4 relative z-10">{formData.photos.map((src, i) => (<div key={i} className="p-1.5 bg-[#fdfbf7] border-2 border-[#a89575] shadow-xl w-36 relative group"><img src={src} className="w-full aspect-auto object-cover" alt="Preview"/><button type="button" onClick={() => removePhoto(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-3 h-3"/></button></div>))}</div>)}
+                    {formData.photoLayout === 'inline' && (<div className="flex gap-3 overflow-x-auto w-full pb-2 relative z-10">{formData.photos.map((src, i) => (<div key={i} className={`relative group shrink-0 transform ${i % 2 === 0 ? 'rotate-2' : '-rotate-2'}`}><div className="absolute -top-2 left-1/2 -translate-x-1/2 w-6 h-2 bg-white/50 shadow-sm border border-black/10 -rotate-1 z-20"></div><img src={src} className="h-20 w-20 object-cover rounded-sm shadow-xl p-1 bg-white" alt="Preview"/><button type="button" onClick={() => removePhoto(i)} className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-30"><Trash2 className="w-3 h-3"/></button></div>))}</div>)}
                   </div>
                 )}
               </div>
@@ -202,9 +163,7 @@ export default function CreateLetter() {
                     <button type="button" onClick={() => removeWallMessage(i)} className="text-red-500 p-2 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="w-5 h-5"/></button>
                   </div>
                 ))}
-                <button type="button" onClick={addWallMessage} className="text-sm flex items-center gap-1 text-gray-700 font-medium hover:text-gray-900 transition-colors bg-white px-3 py-2 border rounded-lg shadow-sm">
-                  <Plus className="w-4 h-4"/> Tambah Pesan Teman
-                </button>
+                <button type="button" onClick={addWallMessage} className="text-sm flex items-center gap-1 text-gray-700 font-medium hover:text-gray-900 transition-colors bg-white px-3 py-2 border rounded-lg shadow-sm"><Plus className="w-4 h-4"/> Tambah Pesan Teman</button>
               </div>
 
               {/* PLAYLIST MUSIK KESUKAAN */}
@@ -222,16 +181,12 @@ export default function CreateLetter() {
                     <button type="button" onClick={() => removeTrack(i)} className="text-red-500 p-2 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="w-5 h-5"/></button>
                   </div>
                 ))}
-                <button type="button" onClick={addTrack} className="text-sm flex items-center gap-1 text-gray-700 font-medium hover:text-gray-900 transition-colors bg-white px-3 py-2 border rounded-lg shadow-sm">
-                  <Plus className="w-4 h-4"/> Tambah Lagu
-                </button>
+                <button type="button" onClick={addTrack} className="text-sm flex items-center gap-1 text-gray-700 font-medium hover:text-gray-900 transition-colors bg-white px-3 py-2 border rounded-lg shadow-sm"><Plus className="w-4 h-4"/> Tambah Lagu</button>
               </div>
 
               {/* PERSONALISASI & KEAMANAN PIN */}
               <div className="bg-white/60 p-4 md:p-5 rounded-2xl border border-gray-200 space-y-4">
-                <div className="border-b border-gray-200 pb-2">
-                  <h3 className="font-serif text-base md:text-lg text-gray-800">Personalisasi Tema</h3>
-                </div>
+                <div className="border-b border-gray-200 pb-2"><h3 className="font-serif text-base md:text-lg text-gray-800">Personalisasi Tema</h3></div>
                 
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Pilih Tema & Warna Latar</label>
@@ -239,7 +194,7 @@ export default function CreateLetter() {
                     {Object.entries(themes).map(([key, t]) => (
                       <div key={key} onClick={() => setFormData({...formData, theme: key})} className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${formData.theme === key ? 'border-gray-900 bg-white shadow-md scale-[1.02]' : 'border-white/80 bg-white/70 hover:bg-white hover:border-gray-300'}`}>
                         <div className="w-8 h-8 rounded-full border border-black/10 shrink-0 shadow-inner flex items-center justify-center" style={{ backgroundColor: t.preview }}><div className="w-3 h-3 rounded-full" style={{ backgroundColor: t.bg }}></div></div>
-                        <div className="flex-1 min-w-0"><p className="text-sm font-medium text-gray-800 truncate">{t.name}</p>{t.badge && <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${t.badge.includes('Baru') ? 'bg-pink-100 text-pink-600' : 'bg-gray-100 text-gray-500'}`}>{t.badge}</span>}</div>
+                        <div className="flex-1 min-w-0"><p className="text-sm font-medium text-gray-800 truncate">{t.name}</p>{t.badge && <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${t.badge.includes('Kotak') ? 'bg-purple-100 text-purple-700' : t.badge.includes('Baru') ? 'bg-pink-100 text-pink-600' : 'bg-gray-100 text-gray-500'}`}>{t.badge}</span>}</div>
                       </div>
                     ))}
                   </div>
@@ -247,7 +202,7 @@ export default function CreateLetter() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Aksesoris Amplop</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Aksesoris Amplop/Kotak</label>
                     <select className="w-full bg-white border-gray-200 rounded-xl p-3 border outline-none focus:ring-2 focus:ring-gray-800" onChange={e => setFormData({...formData, accessory: e.target.value})}>
                       <option value="waxseal">Wax Seal 💧</option><option value="pita">Pita Elegan 🎀</option><option value="bunga">Bunga Kering 🌸</option>
                       <option value="prangko">Prangko Klasik 📮</option><option value="kunci">Kunci Vintage 🗝️</option><option value="feather">Bulu Pena 🪶</option>
@@ -291,7 +246,6 @@ export default function CreateLetter() {
               <button onClick={copyToClipboard} className="flex items-center gap-2 bg-gray-900 text-white px-5 py-4 hover:bg-gray-800 transition-colors font-medium"><Copy className="w-4 h-4"/> <span className="hidden sm:inline">{copied ? 'Tersalin!' : 'Salin'}</span></button>
             </div>
             
-            {/* Tombol Navigasi Pasca-Sukses yang Rapi di Dalam Box */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-4 w-full max-w-md pt-4 border-t border-gray-100">
               <a href={shareUrl} target="_blank" className="text-gray-500 hover:text-gray-800 hover:underline flex items-center gap-2 font-medium transition-colors">
                 Lihat Hasil <ExternalLink className="w-4 h-4" />
