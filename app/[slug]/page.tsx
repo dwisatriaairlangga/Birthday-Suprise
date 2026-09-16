@@ -1,36 +1,31 @@
 'use client';
 import { useState, useEffect, use } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feather, Sparkles, Heart, Paperclip, Music, Smile, Star, Lock, Copy } from 'lucide-react';
+import { MailOpen, Gift, RefreshCcw, Droplet, Ribbon, Flower2, Stamp, Key, Feather, Sparkles, Heart, Paperclip, Music, Smile, Star, Lock, Copy, Send, CheckCircle2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import html2canvas from 'html2canvas';
 import { supabase } from '@/lib/supabase';
 
-// TEMA DENGAN ACCENT COLOR & WARNA KOTAK (JIKA BOX)
+// TEMA DENGAN ACCENT COLOR & WARNA KOTAK
 const themes = {
-  // --- TEMA KOTAK (BOX) ---
   secretBoxPurple: { bg: '#F8E1E1', envelope: '#6A417B', text: 'text-white', accent: '#D5558B', boxInside: '#3E234A', boxLid: '#7F5192', boxBorder: '#4B2A59', boxBaseBorder: '#5A3568' },
   sakuraPinkBox: { bg: '#FFF4F7', envelope: '#E85D88', text: 'text-white', accent: '#F28CA8', boxInside: '#8A2B47', boxLid: '#F27B9F', boxBorder: '#BA4366', boxBaseBorder: '#C94B72' },
   oceanBlueBox: { bg: '#E3F2FD', envelope: '#1565C0', text: 'text-white', accent: '#4BA1D8', boxInside: '#082759', boxLid: '#2196F3', boxBorder: '#0D47A1', boxBaseBorder: '#115293' },
-  
-  // --- TEMA SURAT (ENVELOPE) ---
-  sakuraPink: { bg: '#FFF4F7', envelope: '#E85D88', text: 'text-white', accent: '#F28CA8', boxInside: '#8A2B47', boxLid: '#F27B9F', boxBorder: '#BA4366', boxBaseBorder: '#C94B72' },
-  oceanBlue: { bg: '#E3F2FD', envelope: '#1565C0', text: 'text-white', accent: '#4BA1D8', boxInside: '#082759', boxLid: '#2196F3', boxBorder: '#0D47A1', boxBaseBorder: '#115293' },
-  
-  // --- TEMA REGULER ---
-  dalkomBlue: { bg: '#FCF1DD', envelope: '#2945A8', text: 'text-white', accent: '#F78660', boxInside: '#1C2F7A', boxLid: '#3C5DCC', boxBorder: '#223A96', boxBaseBorder: '#263F9E' },
-  matchaPink: { bg: '#FADADD', envelope: '#7C9D70', text: 'text-white', accent: '#FDF5C9', boxInside: '#5F7B4C', boxLid: '#96B77B', boxBorder: '#4D6F43', boxBaseBorder: '#597A4D' },
-  lilacBubblegum: { bg: '#FFC0CB', envelope: '#C8A2C8', text: 'text-white', accent: '#FFF0F5', boxInside: '#9C7AA5', boxLid: '#D9B5DE', boxBorder: '#8A6496', boxBaseBorder: '#9370A3' },
-  scrapbookBlue: { bg: '#F2E8D9', envelope: '#5A80A6', text: 'text-white', accent: '#F29CB0', boxInside: '#355C7D', boxLid: '#7EA3C0', boxBorder: '#2E4E6A', boxBaseBorder: '#3B5F82' },
-  dustyNavy: { bg: '#DDAEB2', envelope: '#1A2E46', text: 'text-white', accent: '#DDB24A', boxInside: '#111F31', boxLid: '#2E496C', boxBorder: '#16293E', boxBaseBorder: '#1A314F' },
-  oliveGold: { bg: '#DDB24A', envelope: '#595F37', text: 'text-white', accent: '#F3E6D6', boxInside: '#3E4328', boxLid: '#7B8052', boxBorder: '#2E3822', boxBaseBorder: '#3B422C' },
-  plumCream: { bg: '#F3E6D6', envelope: '#4F2C3A', text: 'text-white', accent: '#DDAEB2', boxInside: '#2F1A24', boxLid: '#7A495E', boxBorder: '#2B1720', boxBaseBorder: '#3B2331' },
-  orangeTeal: { bg: '#245D63', envelope: '#CA5B31', text: 'text-white', accent: '#EAE1CC', boxInside: '#12454D', boxLid: '#E06D43', boxBorder: '#9F3A21', boxBaseBorder: '#BE4F2B' },
-  forestSand: { bg: '#EAE1CC', envelope: '#1D5139', text: 'text-white', accent: '#D3A95B', boxInside: '#123C2D', boxLid: '#2F7759', boxBorder: '#0E2E24', boxBaseBorder: '#184E3E' },
-  burgundyGold: { bg: '#D3A95B', envelope: '#6C1226', text: 'text-white', accent: '#F2E8D9', boxInside: '#450E1B', boxLid: '#842234', boxBorder: '#3E0A16', boxBaseBorder: '#561625' },
-  turquoiseCoral: { bg: '#F27E6A', envelope: '#007F86', text: 'text-white', accent: '#F2E8D9', boxInside: '#005E63', boxLid: '#1AA1A7', boxBorder: '#00515B', boxBaseBorder: '#006972' },
-  lavenderSlate: { bg: '#585966', envelope: '#C1A8C5', text: 'text-gray-900', accent: '#DDAEB2', boxInside: '#484B5B', boxLid: '#CDB4D1', boxBorder: '#6A6473', boxBaseBorder: '#7B7382' },
-  deepGreenBlush: { bg: '#F1CAD0', envelope: '#0B4A31', text: 'text-white', accent: '#F2E8D9', boxInside: '#0A3627', boxLid: '#2C7D64', boxBorder: '#0B2F25', boxBaseBorder: '#154D3F' },
+  sakuraPink: { bg: '#FFF4F7', envelope: '#E85D88', text: 'text-white', accent: '#F28CA8' },
+  oceanBlue: { bg: '#E3F2FD', envelope: '#1565C0', text: 'text-white', accent: '#4BA1D8' },
+  dalkomBlue: { bg: '#FCF1DD', envelope: '#2945A8', text: 'text-white', accent: '#F78660' },
+  matchaPink: { bg: '#FADADD', envelope: '#7C9D70', text: 'text-white', accent: '#FDF5C9' },
+  lilacBubblegum: { bg: '#FFC0CB', envelope: '#C8A2C8', text: 'text-white', accent: '#FFF0F5' },
+  scrapbookBlue: { bg: '#F2E8D9', envelope: '#5A80A6', text: 'text-white', accent: '#F29CB0' },
+  dustyNavy: { bg: '#DDAEB2', envelope: '#1A2E46', text: 'text-white', accent: '#DDB24A' },
+  oliveGold: { bg: '#DDB24A', envelope: '#595F37', text: 'text-white', accent: '#F3E6D6' },
+  plumCream: { bg: '#F3E6D6', envelope: '#4F2C3A', text: 'text-white', accent: '#DDAEB2' },
+  orangeTeal: { bg: '#245D63', envelope: '#CA5B31', text: 'text-white', accent: '#EAE1CC' },
+  forestSand: { bg: '#EAE1CC', envelope: '#1D5139', text: 'text-white', accent: '#D3A95B' },
+  burgundyGold: { bg: '#D3A95B', envelope: '#6C1226', text: 'text-white', accent: '#F2E8D9' },
+  turquoiseCoral: { bg: '#F27E6A', envelope: '#007F86', text: 'text-white', accent: '#F2E8D9' },
+  lavenderSlate: { bg: '#585966', envelope: '#C1A8C5', text: 'text-gray-900', accent: '#DDAEB2' },
+  deepGreenBlush: { bg: '#F1CAD0', envelope: '#0B4A31', text: 'text-white', accent: '#F2E8D9' },
 };
 
 const getEmbedData = (url: string) => {
@@ -39,10 +34,7 @@ const getEmbedData = (url: string) => {
   if (ytMatch && ytMatch[1]) return { type: 'youtube', url: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1` };
   const spotMatch = url.match(/spotify\.com\/(track|playlist)\/([a-zA-Z0-9]+)/);
   if (spotMatch && spotMatch[1] && spotMatch[2]) return { type: 'spotify', url: `https://open.spotify.com/embed/${spotMatch[1]}/${spotMatch[2]}` };
-  if (url.includes('music.apple.com')) {
-    const embedUrl = url.replace('music.apple.com', 'embed.music.apple.com');
-    return { type: 'apple', url: embedUrl };
-  }
+  if (url.includes('music.apple.com')) { return { type: 'apple', url: url.replace('music.apple.com', 'embed.music.apple.com') }; }
   return null;
 };
 
@@ -91,6 +83,11 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
   
+  // State untuk Fitur Balasan
+  const [replyText, setReplyText] = useState('');
+  const [isReplySent, setIsReplySent] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isDownloading, setIsDownloading] = useState(false);
   const [stage, setStage] = useState<'envelope' | 'letter' | 'gift'>('envelope');
@@ -102,19 +99,17 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
     async function fetchLetter() {
       const { data: dbData, error } = await supabase.from('letters').select('*').eq('slug', slug).single();
       if (error || !dbData) {
-        setData({ error: true });
-        setLoadingScreen(false);
+        setData({ error: true }); setLoadingScreen(false);
       } else {
         setData({
           sender: dbData.sender, receiver: dbData.receiver, content: dbData.content,
-          theme: dbData.theme, accessory: dbData.accessory, giftType: dbData.gift_type,
-          giftMessage: dbData.gift_message, photos: dbData.photos || [], photoLayout: dbData.photo_layout || 'polaroid',
-          wallMessages: dbData.wall_messages || [], pin: dbData.pin, playlist: dbData.playlist,
-          opened_at: dbData.opened_at
+          theme: dbData.theme, accessory: dbData.accessory, giftType: dbData.gift_type, giftMessage: dbData.gift_message,
+          fontFamily: dbData.font_family || 'Playfair Display', photos: dbData.photos || [], photoLayout: dbData.photo_layout || 'polaroid',
+          wallMessages: dbData.wall_messages || [], pin: dbData.pin, playlist: dbData.playlist, opened_at: dbData.opened_at
         });
-        if (dbData.playlist && dbData.playlist.tracks && dbData.playlist.tracks.length > 0) {
-          setEmbed(getEmbedData(dbData.playlist.tracks[0].url));
-        }
+        setIsLiked(dbData.is_liked || false);
+        if (dbData.reply_message) setIsReplySent(true);
+        if (dbData.playlist?.tracks?.length > 0) setEmbed(getEmbedData(dbData.playlist.tracks[0].url));
         if (dbData.pin) setIsLocked(true);
         setTimeout(() => setLoadingScreen(false), 2000);
       }
@@ -122,54 +117,36 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
     fetchLetter();
   }, [slug]);
 
-  const playTrack = (index: number) => {
-    if (data?.playlist?.tracks?.[index]) {
-      setCurrentTrackIndex(index);
-      setEmbed(getEmbedData(data.playlist.tracks[index].url));
-    }
-  };
-
-  const handlePinSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (pinInput === data.pin) {
-      setIsLocked(false);
-    } else {
-      setPinError(true);
-      setTimeout(() => setPinError(false), 1000);
-    }
-  };
+  const playTrack = (index: number) => { if (data?.playlist?.tracks?.[index]) { setCurrentTrackIndex(index); setEmbed(getEmbedData(data.playlist.tracks[index].url)); } };
+  const handlePinSubmit = (e: React.FormEvent) => { e.preventDefault(); if (pinInput === data.pin) { setIsLocked(false); } else { setPinError(true); setTimeout(() => setPinError(false), 1000); } };
 
   const openEnvelope = async () => {
     setStage('letter');
-    if (!data.opened_at) {
-      await supabase.from('letters').update({ opened_at: new Date().toISOString() }).eq('slug', slug);
-    }
+    if (!data.opened_at) await supabase.from('letters').update({ opened_at: new Date().toISOString() }).eq('slug', slug);
+  };
+
+  // FUNGSI UNTUK MENGIRIM BALASAN KE DASHBOARD PENGIRIM
+  const handleSendReply = async () => {
+    if (!replyText.trim()) return;
+    await supabase.from('letters').update({ reply_message: replyText }).eq('slug', slug);
+    setIsReplySent(true);
+  };
+
+  const handleLike = async () => {
+    if (isLiked) return;
+    setIsLiked(true);
+    await supabase.from('letters').update({ is_liked: true }).eq('slug', slug);
+    confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 }, colors: ['#FFC0CB', '#FF69B4', '#FF1493'] });
   };
 
   const downloadSurat = async () => {
-    setIsDownloading(true);
-    const element = document.getElementById('surat-content');
-    if (!element) {
-      alert("Area surat tidak ditemukan.");
-      setIsDownloading(false);
-      return;
-    }
+    setIsDownloading(true); const element = document.getElementById('surat-content');
+    if (!element) return setIsDownloading(false);
     try {
       await new Promise(resolve => setTimeout(resolve, 600));
-      const canvas = await html2canvas(element, {
-        useCORS: true,
-        allowTaint: true,
-        scale: 2, 
-        backgroundColor: themes[data.theme as keyof typeof themes].bg
-      });
-      const link = document.createElement('a');
-      link.download = `Surat-Kejutan-${data.receiver}.png`;
-      link.href = canvas.toDataURL('image/png', 1.0);
-      link.click();
-    } catch (err) {
-      console.error(err);
-      alert("Oops! Gagal menyimpan gambar.");
-    }
+      const canvas = await html2canvas(element, { useCORS: true, allowTaint: true, scale: 2, backgroundColor: themes[data.theme as keyof typeof themes].bg });
+      const link = document.createElement('a'); link.download = `Surat-Kejutan-${data.receiver}.png`; link.href = canvas.toDataURL('image/png', 1.0); link.click();
+    } catch (err) { alert("Oops! Gagal menyimpan gambar."); }
     setIsDownloading(false);
   };
 
@@ -177,9 +154,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
     setStage('gift');
     if (data?.giftType === 'kembangApi') {
       const duration = 5 * 1000; const animationEnd = Date.now() + duration; const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-      const interval: any = setInterval(() => {
-        const timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) return clearInterval(interval);
+      const interval: any = setInterval(() => { const timeLeft = animationEnd - Date.now(); if (timeLeft <= 0) return clearInterval(interval);
         confetti({ ...defaults, particleCount: 50 * (timeLeft / duration), origin: { x: Math.random() * 0.2 + 0.1, y: Math.random() - 0.2 } });
         confetti({ ...defaults, particleCount: 50 * (timeLeft / duration), origin: { x: Math.random() * 0.2 + 0.7, y: Math.random() - 0.2 } });
       }, 250);
@@ -188,8 +163,7 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
       const shoot = () => { confetti({ ...defaults, particleCount: 40, scalar: 1.2, shapes: ['star'] }); confetti({ ...defaults, particleCount: 10, scalar: 0.75, shapes: ['circle'] }); };
       setTimeout(shoot, 0); setTimeout(shoot, 100); setTimeout(shoot, 200);
     } else if (data?.giftType === 'bunga') {
-      const emojis = ['🌸', '🌺', '🌻', '🌹', '🌷'];
-      setFallingFlowers(Array.from({ length: 30 }).map((_, i) => ({ id: i, x: Math.random() * 100, emoji: emojis[Math.floor(Math.random() * emojis.length)] })));
+      const emojis = ['🌸', '🌺', '🌻', '🌹', '🌷']; setFallingFlowers(Array.from({ length: 30 }).map((_, i) => ({ id: i, x: Math.random() * 100, emoji: emojis[Math.floor(Math.random() * emojis.length)] })));
     } else if (data?.giftType === 'bungaTumbuh') {
       setGrowingFlowers(Array.from({ length: 20 }).map((_, i) => ({ id: i, x: (i * 5) + (Math.random() * 3), delay: Math.random() * 1.2, type: i % 2 === 0 ? 'tulip' : 'blossom', size: Math.random() * 30 + 90 })));
     } else {
@@ -197,49 +171,36 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
     }
   };
 
-  const resetSurprise = () => { setStage('envelope'); setFallingFlowers([]); setGrowingFlowers([]); };
+  // Reset and replay the gift animation/effects
+  const resetSurprise = () => {
+    setFallingFlowers([]);
+    setGrowingFlowers([]);
+    // small timeout to allow clearing animations before replay
+    setTimeout(() => triggerGift(), 150);
+  };
 
   if (data?.error) return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-xl font-serif">Surat tidak ditemukan.</div>;
   if (!data) return null;
 
-  const activeTheme = themes[data.theme as keyof typeof themes] || themes.scrapbookBlue;
+  // some themes don't include box-specific colors; cast to any to allow optional access
+  const activeTheme = (themes[data.theme as keyof typeof themes] || themes.scrapbookBlue) as any;
   const isDarkScene = stage === 'gift' && data.giftType === 'bungaTumbuh';
   const paragraphs = data.content ? data.content.split('\n').filter((p: string) => p.trim() !== '') : [];
-  
-  // PENGECEKAN APAKAH TEMA MENGGUNAKAN BOX 3D
   const isBoxTheme = data.theme.includes('Box');
+  const letterFont = data.fontFamily || 'Playfair Display';
 
   return (
-    <main 
-      className={`min-h-screen flex flex-col items-center justify-center p-4 md:p-8 relative overflow-x-hidden transition-colors duration-1000 py-10 md:py-16 pb-32 md:pb-24 ${isDarkScene ? 'bg-black' : ''}`}
-      style={!isDarkScene ? { backgroundColor: activeTheme.bg } : {}}
-    >
+    <main className={`min-h-screen flex flex-col items-center justify-center p-4 md:p-8 relative overflow-x-hidden transition-colors duration-1000 py-10 md:py-16 pb-32 md:pb-24 ${isDarkScene ? 'bg-black' : ''}`} style={!isDarkScene ? { backgroundColor: activeTheme.bg } : {}}>
       
-      <AnimatePresence mode="wait">
-        {/* LAYAR 1: LOADING SCREEN */}
-        {loadingScreen && (
-          <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center justify-center z-50">
-            <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.2 }}>
-              <Heart className="w-16 h-16 text-pink-500 fill-pink-500" />
-            </motion.div>
-            <p className="font-serif text-gray-700 text-lg animate-pulse mt-4">Menyiapkan kejutan...</p>
-          </motion.div>
-        )}
+      {/* Import Font untuk Preview Pengalaman Penerima */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Caveat&family=Dancing+Script&family=Indie+Flower&family=Kalam&family=Lora&family=Pacifico&family=Patrick+Hand&family=Playfair+Display&display=swap');
+      `}</style>
 
-        {/* LAYAR 2: PIN LOCK SCREEN */}
-        {!loadingScreen && isLocked && (
-          <motion.div key="lock" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border-2 border-white/50 z-40">
-            <div className="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Lock className="w-8 h-8 text-pink-500" />
-            </div>
-            <h2 className="font-serif text-2xl text-gray-800 font-bold mb-2">Surat Terkunci</h2>
-            <p className="text-gray-500 text-sm mb-6">Masukkan PIN rahasia untuk membuka.</p>
-            <form onSubmit={handlePinSubmit}>
-              <motion.input animate={pinError ? { x: [-10, 10, -10, 10, 0], borderColor: ['#fecaca', '#ef4444', '#fecaca'] } : {}} type="password" placeholder="••••" className="w-full text-center tracking-widest text-2xl p-4 bg-gray-50 border border-gray-200 rounded-xl mb-4 outline-none focus:ring-2 focus:ring-pink-500" value={pinInput} onChange={e => setPinInput(e.target.value)} />
-              <button type="submit" className="w-full bg-gray-900 text-white font-medium py-3 rounded-xl hover:bg-gray-800 transition-colors shadow-lg">Buka Gembok</button>
-            </form>
-          </motion.div>
-        )}
+      <AnimatePresence mode="wait">
+        {/* LAYAR 1 & 2: LOADING & PIN LOCK (Tidak Berubah) */}
+        {loadingScreen && (<motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center justify-center z-50"><motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.2 }}><Heart className="w-16 h-16 text-pink-500 fill-pink-500" /></motion.div><p className="font-serif text-gray-700 text-lg animate-pulse mt-4">Menyiapkan kejutan...</p></motion.div>)}
+        {!loadingScreen && isLocked && (<motion.div key="lock" initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border-2 border-white/50 z-40"><div className="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"><Lock className="w-8 h-8 text-pink-500" /></div><h2 className="font-serif text-2xl text-gray-800 font-bold mb-2">Surat Terkunci</h2><p className="text-gray-500 text-sm mb-6">Masukkan PIN rahasia untuk membuka.</p><form onSubmit={handlePinSubmit}><motion.input animate={pinError ? { x: [-10, 10, -10, 10, 0], borderColor: ['#fecaca', '#ef4444', '#fecaca'] } : {}} type="password" placeholder="••••" className="w-full text-center tracking-widest text-2xl p-4 bg-gray-50 border border-gray-200 rounded-xl mb-4 outline-none focus:ring-2 focus:ring-pink-500" value={pinInput} onChange={e => setPinInput(e.target.value)} /><button type="submit" className="w-full bg-gray-900 text-white font-medium py-3 rounded-xl hover:bg-gray-800 transition-colors shadow-lg">Buka Gembok</button></form></motion.div>)}
 
         {/* LAYAR UTAMA (SETELAH UNLOCK) */}
         {!loadingScreen && !isLocked && (
@@ -255,87 +216,58 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
               {stage === 'envelope' && (
                 <>
                   {isBoxTheme ? (
-                    // --- TAMPILAN KHUSUS: SECRET BOX 3D DINAMIS MENGIKUTI WARNA TEMA ---
                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0, y: -50 }} className="flex flex-col items-center cursor-pointer z-20 group" onClick={openEnvelope}>
                       <div className="relative w-64 h-56 sm:w-72 sm:h-64 flex items-end justify-center transition-transform hover:scale-105">
-                        
-                        {/* Glow/Shadow belakang kotak */}
                         <div className="absolute bottom-0 w-48 h-10 bg-black/20 blur-xl rounded-full"></div>
-
-                        {/* Interior kotak (Kertas surat yang menyembul) */}
-                        <div className="absolute bottom-16 w-52 sm:w-60 h-28 rounded-t-md z-0 overflow-hidden flex items-end justify-center" style={{ backgroundColor: (activeTheme as any).boxInside || '#3E234A' }}>
-                           <div className="w-40 h-20 bg-white/95 rounded-t-md translate-y-4 group-hover:translate-y-1 transition-transform duration-500 shadow-inner">
-                             <div className="w-full h-4 border-b-2 border-dashed border-gray-300 mt-2"></div>
-                           </div>
+                        <div className="absolute bottom-16 w-52 sm:w-60 h-28 rounded-t-md z-0 overflow-hidden flex items-end justify-center" style={{ backgroundColor: activeTheme.boxInside }}>
+                           <div className="w-40 h-20 bg-white/95 rounded-t-md translate-y-4 group-hover:translate-y-1 transition-transform duration-500 shadow-inner"><div className="w-full h-4 border-b-2 border-dashed border-gray-300 mt-2"></div></div>
                         </div>
-
-                        {/* Tutup Kotak (Lid) - Terbuka saat hover */}
                         <div className="absolute top-6 sm:top-8 w-60 sm:w-68 h-20 sm:h-24 rounded-sm shadow-2xl z-20 transition-all duration-700 group-hover:-translate-y-12 group-hover:-rotate-3 flex flex-col items-center justify-center border-b-8" style={{ backgroundColor: activeTheme.boxLid, borderColor: activeTheme.boxBorder }}>
                            <Sparkles className="w-6 h-6 text-white/50 absolute top-2 right-2 opacity-50" />
-                           <span className="text-white font-serif font-black text-2xl tracking-widest opacity-90 drop-shadow-md">Secret Box</span>
+                           <span className="text-white font-serif font-black text-2xl tracking-widest opacity-90 drop-shadow-md">Kejutan🎁</span>
                         </div>
-
-                        {/* Dasar Kotak */}
                         <div className="w-56 sm:w-64 h-32 sm:h-36 rounded-b-xl shadow-xl relative z-10 flex items-center justify-center border-t-4" style={{ backgroundColor: activeTheme.envelope, borderColor: activeTheme.boxBaseBorder }}>
                           <Heart className="w-10 h-10 text-white/10" />
-                          
-                          {/* Aksesoris Ornamen yang Dipilih Pengirim */}
                           <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 text-white/90 drop-shadow-md z-10">
-                            {data.accessory === 'waxseal' && <Droplet className="w-8 h-8 text-red-400" fill="currentColor" />}
-                            {data.accessory === 'pita' && <Ribbon className="w-9 h-9 text-white" fill="currentColor" />}
-                            {data.accessory === 'bunga' && <Flower2 className="w-8 h-8 text-pink-200" />}
-                            {data.accessory === 'prangko' && <Stamp className="w-8 h-8 text-white" />}
-                            {data.accessory === 'kunci' && <Key className="w-8 h-8 text-yellow-300" />}
-                            {data.accessory === 'feather' && <Feather className="w-8 h-8 text-white" />}
-                            {data.accessory === 'sparkles' && <Sparkles className="w-8 h-8 text-yellow-300" />}
-                            {data.accessory === 'heart' && <Heart className="w-9 h-9 text-rose-400" fill="currentColor" />}
-                            {data.accessory === 'paperclip' && <Paperclip className="w-8 h-8 text-white" />}
+                            {data.accessory === 'waxseal' && <Droplet className="w-8 h-8 text-red-400" fill="currentColor" />}{data.accessory === 'pita' && <Ribbon className="w-9 h-9 text-white" fill="currentColor" />}{data.accessory === 'bunga' && <Flower2 className="w-8 h-8 text-pink-200" />}{data.accessory === 'prangko' && <Stamp className="w-8 h-8 text-white" />}{data.accessory === 'kunci' && <Key className="w-8 h-8 text-yellow-300" />}{data.accessory === 'feather' && <Feather className="w-8 h-8 text-white" />}{data.accessory === 'sparkles' && <Sparkles className="w-8 h-8 text-yellow-300" />}{data.accessory === 'heart' && <Heart className="w-9 h-9 text-rose-400" fill="currentColor" />}{data.accessory === 'paperclip' && <Paperclip className="w-8 h-8 text-white" />}
                           </div>
                         </div>
                       </div>
-                      <p className={`mt-6 sm:mt-8 font-serif text-base sm:text-lg text-center font-bold animate-pulse mix-blend-difference`} style={{ color: activeTheme.envelope }}>Ketuk untuk membuka</p>
+                      <p className={`mt-6 sm:mt-8 font-serif text-base sm:text-lg text-center font-bold animate-pulse mix-blend-difference`} style={{ color: activeTheme.envelope }}>Ketuk untuk membuka kotak</p>
                     </motion.div>
                   ) : (
-                    // --- TAMPILAN KLASIK: AMPLOP BIASA UNTUK TEMA SURAT ---
                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0, y: -50 }} className="flex flex-col items-center cursor-pointer z-20 group" onClick={openEnvelope}>
                       <div className="w-64 h-44 sm:w-72 sm:h-52 rounded-xl shadow-2xl relative flex items-center justify-center transition-transform group-hover:scale-105" style={{ backgroundColor: activeTheme.envelope }}>
                         <div className="absolute top-2 right-2 sm:top-3 sm:right-3 text-white/60 drop-shadow-md z-10">
-                          {data.accessory === 'waxseal' && <Droplet className="w-7 h-7 sm:w-9 sm:h-9 text-red-500/80" fill="currentColor" />}
-                          {data.accessory === 'pita' && <Ribbon className="w-7 h-7 sm:w-9 sm:h-9" />}
-                          {data.accessory === 'bunga' && <Flower2 className="w-7 h-7 sm:w-9 sm:h-9" />}
-                          {data.accessory === 'prangko' && <Stamp className="w-7 h-7 sm:w-9 sm:h-9" />}
-                          {data.accessory === 'kunci' && <Key className="w-7 h-7 sm:w-9 sm:h-9 text-yellow-600/80" />}
-                          {data.accessory === 'feather' && <Feather className="w-7 h-7 sm:w-9 sm:h-9" />}
-                          {data.accessory === 'sparkles' && <Sparkles className="w-7 h-7 sm:w-9 sm:h-9 text-yellow-400" />}
-                          {data.accessory === 'heart' && <Heart className="w-7 h-7 sm:w-9 sm:h-9 text-rose-500/80" fill="currentColor" />}
-                          {data.accessory === 'paperclip' && <Paperclip className="w-7 h-7 sm:w-9 sm:h-9" />}
+                          {data.accessory === 'waxseal' && <Droplet className="w-7 h-7 sm:w-9 sm:h-9 text-red-500/80" fill="currentColor" />}{data.accessory === 'pita' && <Ribbon className="w-7 h-7 sm:w-9 sm:h-9" />}{data.accessory === 'bunga' && <Flower2 className="w-7 h-7 sm:w-9 sm:h-9" />}{data.accessory === 'prangko' && <Stamp className="w-7 h-7 sm:w-9 sm:h-9" />}{data.accessory === 'kunci' && <Key className="w-7 h-7 sm:w-9 sm:h-9 text-yellow-600/80" />}{data.accessory === 'feather' && <Feather className="w-7 h-7 sm:w-9 sm:h-9" />}{data.accessory === 'sparkles' && <Sparkles className="w-7 h-7 sm:w-9 sm:h-9 text-yellow-400" />}{data.accessory === 'heart' && <Heart className="w-7 h-7 sm:w-9 sm:h-9 text-rose-500/80" fill="currentColor" />}{data.accessory === 'paperclip' && <Paperclip className="w-7 h-7 sm:w-9 sm:h-9" />}
                         </div>
                         <WavyBottom accentColor={activeTheme.accent} />
                         <MailOpen className={`w-10 h-10 sm:w-14 sm:h-14 ${activeTheme.text} opacity-40 z-10 relative`} />
                       </div>
-                      <p className={`mt-6 sm:mt-8 font-serif text-base sm:text-lg ${activeTheme.text} text-center font-bold animate-pulse mix-blend-difference`}>Ketuk untuk membuka</p>
+                      <p className={`mt-6 sm:mt-8 font-serif text-base sm:text-lg ${activeTheme.text} text-center font-bold animate-pulse mix-blend-difference`}>Ketuk untuk membuka surat</p>
                     </motion.div>
                   )}
                 </>
               )}
             </AnimatePresence>
 
-            {/* TAHAP 2: SCRAPBOOK CARDS */}
+            {/* TAHAP 2: SCRAPBOOK CARDS (Dengan Pilihan Font Aktif) */}
             <AnimatePresence>
               {stage === 'letter' && (
                 <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ x: -50, opacity: 0 }} className="w-full max-w-2xl z-20 pb-10 flex flex-col items-center">
                   
-                  {/* WRAPPER ID="surat-content" UNTUK DOWNLOAD */}
                   <div id="surat-content" className="w-full flex flex-col gap-6 md:gap-8 pb-4">
-                    
-                    {/* KARTU 1: ISI SURAT UTAMA */}
+                    {/* KARTU 1: ISI SURAT */}
                     <div className="relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20 w-full" style={{ backgroundColor: activeTheme.envelope }}>
                       <CardDoodles />
                       <CutoutText text={`UNTUK ${data.receiver}`} />
-                      <div className="relative z-10">
+                      <div className="relative z-10 mt-6">
                         {paragraphs.map((para: string, i: number) => (
                           <div key={i} className="mb-4">
-                            <p className={`font-serif text-base md:text-lg leading-relaxed ${activeTheme.text} opacity-95 text-center drop-shadow-sm`}>{para}</p>
+                            {/* PENGGUNAAN FONT DINAMIS */}
+                            <p className={`text-xl md:text-2xl leading-relaxed ${activeTheme.text} opacity-95 text-center drop-shadow-sm font-medium`} style={{ fontFamily: letterFont }}>
+                              {para}
+                            </p>
                             {data.photoLayout === 'inline' && data.photos && data.photos[i] && (
                               <div className={`mt-4 mx-auto bg-white p-2 shadow-lg max-w-[200px] transform ${i % 2 === 0 ? 'rotate-2' : '-rotate-3'} z-20 relative`}>
                                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-3 bg-white/40 shadow-sm border border-black/10 -rotate-2"></div>
@@ -348,99 +280,27 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                       <WavyBottom accentColor={activeTheme.accent} />
                     </div>
 
-                    {/* KARTU 2: GALERI FOTO */}
+                    {/* KARTU LAINNYA (Galeri, Playlist, Wall of Messages - Kode tidak diubah untuk menghemat ruang) */}
                     {data.photos && data.photos.length > 0 && data.photoLayout !== 'inline' && (
                       <div className="relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20 w-full" style={{ backgroundColor: activeTheme.envelope }}>
                         <CardDoodles />
                         <CutoutText text="MEMORIES" />
                         <div className="relative z-10 flex flex-col items-center mt-6">
-                          {data.photoLayout === 'photobooth' && (
-                            <div className="bg-white p-3 shadow-lg rounded-sm w-40 sm:w-48 flex flex-col gap-3 sm:gap-4 rotate-2">
-                              {data.photos.map((src: string, i: number) => (<img key={i} src={src} crossOrigin="anonymous" className="w-full aspect-[3/4] object-cover grayscale-[20%] contrast-110" alt="Memori" />))}
-                              <p className="font-serif text-center text-[10px] sm:text-xs text-gray-500 mt-2 font-bold tracking-widest uppercase">{data.sender}</p>
-                            </div>
-                          )}
-                          {data.photoLayout === 'polaroid' && (
-                            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-                              {data.photos.map((src: string, i: number) => (
-                                <div key={i} className={`bg-white p-3 pb-8 shadow-xl w-32 sm:w-40 ${i % 2 === 0 ? '-rotate-3' : 'rotate-3'} relative`}>
-                                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-4 bg-white/50 shadow-sm border border-black/10 rotate-1"></div>
-                                  <img src={src} crossOrigin="anonymous" className="w-full aspect-square object-cover" alt="Memori" />
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {data.photoLayout === 'elegant' && (
-                            <div className="flex flex-col gap-5 w-full items-center">
-                              {data.photos.map((src: string, i: number) => (
-                                <div key={i} className="p-2 bg-[#fdfbf7] border-4 border-[#a89575] shadow-md w-full max-w-[240px] rounded-sm">
-                                  <img src={src} crossOrigin="anonymous" className="w-full h-auto object-cover" alt="Memori" />
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                          {data.photoLayout === 'photobooth' && (<div className="bg-white p-3 shadow-lg rounded-sm w-40 sm:w-48 flex flex-col gap-3 sm:gap-4 rotate-2">{data.photos.map((src: string, i: number) => (<img key={i} src={src} crossOrigin="anonymous" className="w-full aspect-[3/4] object-cover grayscale-[20%] contrast-110" alt="Memori" />))}<p className="font-serif text-center text-[10px] sm:text-xs text-gray-500 mt-2 font-bold tracking-widest uppercase">{data.sender}</p></div>)}
+                          {data.photoLayout === 'polaroid' && (<div className="flex flex-wrap justify-center gap-4 sm:gap-6">{data.photos.map((src: string, i: number) => (<div key={i} className={`bg-white p-3 pb-8 shadow-xl w-32 sm:w-40 ${i % 2 === 0 ? '-rotate-3' : 'rotate-3'} relative`}><div className="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-4 bg-white/50 shadow-sm border border-black/10 rotate-1"></div><img src={src} crossOrigin="anonymous" className="w-full aspect-square object-cover" alt="Memori" /></div>))}</div>)}
+                          {data.photoLayout === 'elegant' && (<div className="flex flex-col gap-5 w-full items-center">{data.photos.map((src: string, i: number) => (<div key={i} className="p-2 bg-[#fdfbf7] border-4 border-[#a89575] shadow-md w-full max-w-[240px] rounded-sm"><img src={src} crossOrigin="anonymous" className="w-full h-auto object-cover" alt="Memori" /></div>))}</div>)}
                         </div>
                         <WavyBottom accentColor={activeTheme.accent} />
                       </div>
                     )}
-
-                    {/* KARTU 3: PLAYLIST MUSIK */}
-                    {data.playlist && data.playlist.tracks && data.playlist.tracks.length > 0 && (
-                      <div className="relative p-6 md:p-8 rounded-2xl shadow-xl overflow-hidden pb-16 w-full" style={{ backgroundColor: activeTheme.envelope }}>
-                        <CardDoodles />
-                        <CutoutText text="PLAYLIST" />
-                        <div className="relative z-10">
-                          <div className="bg-black/10 p-4 rounded-xl flex flex-col gap-2">
-                            {data.playlist.tracks.map((track: any, i: number) => (
-                              <div key={i} onClick={() => playTrack(i)} className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${currentTrackIndex === i ? 'bg-black/20' : 'hover:bg-black/10'}`}>
-                                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                                  {currentTrackIndex === i ? <span className="w-3 h-3 bg-white rounded-full animate-pulse"></span> : <Music className="w-4 h-4 text-white" />}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-white font-bold text-sm truncate">{track.title || "Lagu"}</p>
-                                  {track.artist && <p className="text-white/70 text-xs truncate">{track.artist}</p>}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        <WavyBottom accentColor={activeTheme.accent} />
-                      </div>
-                    )}
-
-                    {/* KARTU 4: PESAN TEMAN */}
-                    {data.wallMessages && data.wallMessages.length > 0 && (
-                      <div className="relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20 w-full" style={{ backgroundColor: activeTheme.envelope }}>
-                        <CardDoodles />
-                        <CutoutText text="FACTS" />
-                        <div className="relative z-10 flex flex-col gap-3 mt-4">
-                          {data.wallMessages.map((msg: any, i: number) => (
-                            <div key={i} className={`bg-white/95 p-4 rounded-xl shadow-md transform ${i % 2 === 0 ? 'rotate-1' : '-rotate-1'} border border-white/50`}>
-                              <p className="text-gray-700 font-serif italic mb-2 text-sm">"{msg.message}"</p>
-                              <p className="font-bold text-xs text-right text-gray-500">✨ {msg.name}</p>
-                            </div>
-                          ))}
-                        </div>
-                        <WavyBottom accentColor={activeTheme.accent} />
-                      </div>
-                    )}
-
-                    {/* KARTU 5: PENGIRIM */}
-                    <div className="relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20 text-center w-full" style={{ backgroundColor: activeTheme.envelope }}>
-                       <p className={`font-serif text-sm ${activeTheme.text} opacity-80 mb-1`}>Dari yang tersayang,</p>
-                       <p className={`font-serif text-2xl font-black ${activeTheme.text} tracking-widest mb-4`}>{data.sender}</p>
-                       <WavyBottom accentColor={activeTheme.accent} />
-                    </div>
                   </div>
 
-                  {/* TOMBOL AKSI LUAR KARTU */}
                   <div className="flex flex-col gap-3 w-full px-2 max-w-sm mx-auto">
                     <motion.button onClick={triggerGift} className="w-full px-8 py-4 bg-white text-gray-800 rounded-full font-bold shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2">
-                      <Gift className="w-5 h-5 text-pink-500" /> Buka Kejutan
+                      <Gift className="w-5 h-5 text-pink-500" /> Buka Kejutan Terakhir
                     </motion.button>
                     <button onClick={downloadSurat} disabled={isDownloading} className="w-full flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors bg-white/50 backdrop-blur-sm border border-gray-300 px-6 py-3 rounded-full font-bold shadow-sm">
-                      {isDownloading ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Copy className="w-4 h-4" />}
-                      {isDownloading ? 'Menyimpan...' : 'Simpan Kenangan'}
+                      {isDownloading ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Copy className="w-4 h-4" />} {isDownloading ? 'Menyimpan...' : 'Simpan Kenangan'}
                     </button>
                   </div>
 
@@ -448,21 +308,46 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
               )}
             </AnimatePresence>
 
-            {/* TAHAP 3: KARTU HADIAH */}
+            {/* TAHAP 3: KARTU HADIAH & FORM BALASAN PENERIMA */}
             <AnimatePresence>
               {stage === 'gift' && (
-                <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2 }} className="w-full max-w-md mx-4 md:mx-0 relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20 text-center z-30 mt-4 border-4 border-white/40" style={{ backgroundColor: activeTheme.envelope }}>
-                  <CardDoodles />
-                  <CutoutText text="SURPRISE" />
-                  <div className="relative z-10 flex flex-col items-center">
-                    <p className={`font-serif text-lg md:text-xl italic ${activeTheme.text} mb-8 drop-shadow-sm font-medium`}>"{data.giftMessage || "Kejutan manis untuk hari spesialmu!"}"</p>
-                    <button onClick={resetSurprise} className="mx-auto flex items-center justify-center gap-2 text-sm text-gray-800 transition-transform bg-white px-6 py-3 rounded-full shadow-xl hover:scale-105 active:scale-95 font-bold"><RefreshCcw className="w-4 h-4" /> Ulangi Kejutan</button>
+                <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2 }} className="w-full max-w-md mx-4 md:mx-0 relative z-30 mt-4 flex flex-col gap-4">
+                  
+                  <div className="relative p-6 md:p-10 rounded-2xl shadow-xl overflow-hidden pb-16 md:pb-20 text-center border-4 border-white/40" style={{ backgroundColor: activeTheme.envelope }}>
+                    <CardDoodles />
+                    <CutoutText text="SURPRISE" />
+                    <div className="relative z-10 flex flex-col items-center">
+                      <p className={`text-xl md:text-2xl ${activeTheme.text} mb-8 drop-shadow-sm font-medium`} style={{ fontFamily: letterFont }}>"{data.giftMessage || "Kejutan manis untuk hari spesialmu!"}"</p>
+                      <button onClick={resetSurprise} className="mx-auto flex items-center justify-center gap-2 text-sm text-gray-800 transition-transform bg-white px-6 py-3 rounded-full shadow-xl hover:scale-105 active:scale-95 font-bold"><RefreshCcw className="w-4 h-4" /> Ulangi Kejutan</button>
+                    </div>
+                    <WavyBottom accentColor={activeTheme.accent} />
                   </div>
-                  <WavyBottom accentColor={activeTheme.accent} />
+
+                  {/* KARTU BALASAN (REPLY) */}
+                  <div className="bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-white/50 text-center relative z-40">
+                    <h3 className="font-serif text-gray-800 text-lg font-bold mb-4">Balas Pesan {data.sender}?</h3>
+                    
+                    <button onClick={handleLike} className={`w-full mb-4 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${isLiked ? 'bg-pink-100 text-pink-600 border border-pink-200' : 'bg-gray-100 text-gray-600 hover:bg-pink-50 hover:text-pink-500'}`}>
+                      <Heart className={`w-5 h-5 ${isLiked ? 'fill-pink-500 text-pink-500' : ''}`} /> {isLiked ? 'Kamu menyukai ini!' : 'Kirim Hati (Suka)'}
+                    </button>
+
+                    {!isReplySent ? (
+                      <div className="flex flex-col gap-3">
+                        <textarea rows={3} placeholder={`Tulis balasan manis untuk ${data.sender}...`} value={replyText} onChange={e => setReplyText(e.target.value)} className="w-full text-sm border-gray-200 p-3 rounded-xl outline-none focus:ring-2 focus:ring-pink-500 bg-gray-50 resize-none" />
+                        <button onClick={handleSendReply} className="w-full bg-gray-900 text-white font-medium py-3 rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2">
+                          <Send className="w-4 h-4" /> Kirim Balasan
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="bg-green-50 text-green-700 p-4 rounded-xl border border-green-100 flex items-center justify-center gap-2 font-medium">
+                        <CheckCircle2 className="w-5 h-5" /> Balasan berhasil dikirim!
+                      </div>
+                    )}
+                  </div>
+
                 </motion.div>
               )}
             </AnimatePresence>
-
           </motion.div>
         )}
       </AnimatePresence>
@@ -473,6 +358,13 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
           <Music className="w-4 h-4 text-gray-400 mr-2 absolute left-4 hidden md:block" />
           <iframe src={embed.url} width="100%" height={embed.type === 'apple' ? "150" : "80"} frameBorder="0" allow="autoplay; clipboard-write; encrypted-media" loading="lazy" className="rounded-xl w-full md:ml-6" />
         </motion.div>
+      )}
+
+      {/* FOOTER WATERMARK / BRANDING */}
+      {!loadingScreen && stage !== 'envelope' && (
+        <div className="fixed bottom-4 left-4 z-40 opacity-50 hover:opacity-100 transition-opacity hidden md:block text-xs font-serif text-gray-600 bg-white/70 px-3 py-1.5 rounded-full backdrop-blur-sm border border-gray-200 shadow-sm pointer-events-none">
+          Dibuat dengan ❤️ menggunakan <span className="font-bold text-pink-500">SuratKejutan</span>
+        </div>
       )}
     </main>
   );

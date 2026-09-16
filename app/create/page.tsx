@@ -4,18 +4,12 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Copy, CheckCircle2, ExternalLink, ImagePlus, Plus, Trash2, Eye, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
-// DAFTAR TEMA DENGAN DETAIL WARNA UNTUK VISUAL CARD
 const themes = {
-  // --- OPSI KOTAK (BOX 3D) ---
   secretBoxPurple: { name: 'Secret Box (Purple)', bg: '#F8E1E1', preview: '#6A417B', badge: 'Kotak 🎁' },
   sakuraPinkBox: { name: 'Sakura Anime (Kotak)', bg: '#FFF4F7', preview: '#E85D88', badge: 'Kotak 🎁' },
   oceanBlueBox: { name: 'Ocean Nature (Kotak)', bg: '#E3F2FD', preview: '#1565C0', badge: 'Kotak 🎁' },
-  
-  // --- OPSI SURAT (ENVELOPE KLASIK) ---
   sakuraPink: { name: 'Sakura Anime (Surat)', bg: '#FFF4F7', preview: '#E85D88', badge: 'Surat ✉️' },
   oceanBlue: { name: 'Ocean Nature (Surat)', bg: '#E3F2FD', preview: '#1565C0', badge: 'Surat ✉️' },
-  
-  // --- TEMA REGULER ---
   dalkomBlue: { name: 'Dalkom (Royal Blue)', bg: '#FCF1DD', preview: '#2945A8', badge: 'Baru ✨' },
   matchaPink: { name: 'Matcha (Green & Pink)', bg: '#FADADD', preview: '#7C9D70', badge: 'Baru ✨' },
   lilacBubblegum: { name: 'MiniMaisy (Lilac)', bg: '#FFC0CB', preview: '#C8A2C8', badge: 'Baru ✨' },
@@ -31,10 +25,23 @@ const themes = {
   deepGreenBlush: { name: 'Deep Green & Blush', bg: '#F1CAD0', preview: '#0B4A31', badge: 'Klasik' },
 };
 
+// DAFTAR FONT PILIHAN
+const fontOptions = [
+  { id: 'Playfair Display', name: 'Estetik Premium', type: 'serif' },
+  { id: 'Lora', name: 'Buku Novel', type: 'serif' },
+  { id: 'Caveat', name: 'Tulisan Tangan', type: 'cursive' },
+  { id: 'Dancing Script', name: 'Elegan Bersambung', type: 'cursive' },
+  { id: 'Pacifico', name: 'Tebal Klasik', type: 'cursive' },
+  { id: 'Indie Flower', name: 'Buku Harian', type: 'cursive' },
+  { id: 'Patrick Hand', name: 'Spidol Santai', type: 'cursive' },
+  { id: 'Kalam', name: 'Doodle Lucu', type: 'cursive' },
+];
+
 export default function CreateLetter() {
   const [formData, setFormData] = useState({
     sender: '', receiver: '', content: '', giftType: 'confetti',
     theme: 'sakuraPinkBox', accessory: 'pita', giftMessage: '',
+    fontFamily: 'Playfair Display',
     photos: [] as string[],
     photoLayout: 'polaroid',
     wallMessages: [] as { name: string, message: string }[],
@@ -60,20 +67,14 @@ export default function CreateLetter() {
     });
   };
   const removePhoto = (index: number) => setFormData(prev => ({ ...prev, photos: prev.photos.filter((_, i) => i !== index) }));
-
   const addWallMessage = () => setFormData(prev => ({ ...prev, wallMessages: [...prev.wallMessages, { name: '', message: '' }] }));
   const updateWallMessage = (index: number, field: 'name' | 'message', value: string) => {
-    const newMsgs = [...formData.wallMessages];
-    newMsgs[index][field] = value;
-    setFormData(prev => ({ ...prev, wallMessages: newMsgs }));
+    const newMsgs = [...formData.wallMessages]; newMsgs[index][field] = value; setFormData(prev => ({ ...prev, wallMessages: newMsgs }));
   };
   const removeWallMessage = (index: number) => setFormData(prev => ({ ...prev, wallMessages: prev.wallMessages.filter((_, i) => i !== index) }));
-
   const addTrack = () => setFormData(prev => ({ ...prev, playlistTracks: [...prev.playlistTracks, { title: '', artist: '', url: '' }] }));
   const updateTrack = (index: number, field: 'title' | 'artist' | 'url', value: string) => {
-    const newTracks = [...formData.playlistTracks];
-    newTracks[index][field] = value;
-    setFormData(prev => ({ ...prev, playlistTracks: newTracks }));
+    const newTracks = [...formData.playlistTracks]; newTracks[index][field] = value; setFormData(prev => ({ ...prev, playlistTracks: newTracks }));
   };
   const removeTrack = (index: number) => setFormData(prev => ({ ...prev, playlistTracks: prev.playlistTracks.filter((_, i) => i !== index) }));
 
@@ -86,30 +87,21 @@ export default function CreateLetter() {
     const { error } = await supabase.from('letters').insert([{
       slug: slug, sender: formData.sender, receiver: formData.receiver, content: formData.content,
       theme: formData.theme, accessory: formData.accessory, gift_type: formData.giftType, gift_message: formData.giftMessage,
-      photo_layout: formData.photoLayout, wall_messages: formData.wallMessages, photos: formData.photos,
+      font_family: formData.fontFamily, photo_layout: formData.photoLayout, wall_messages: formData.wallMessages, photos: formData.photos,
       pin: formData.usePin && formData.pin ? formData.pin : null, playlist: playlistData
     }]);
 
     if (error) { alert("Gagal menyimpan surat: " + error.message); return; }
     
-    // SIMPAN KE LOCAL STORAGE UNTUK DASHBOARD
     const existingLetters = JSON.parse(localStorage.getItem('mySuratKejutan') || '[]');
     existingLetters.push(slug);
     localStorage.setItem('mySuratKejutan', JSON.stringify(existingLetters));
-
-    setShareUrl(`${window.location.origin}/${slug}`);
-    setIsSubmitted(true);
+    setShareUrl(`${window.location.origin}/${slug}`); setIsSubmitted(true);
   };
 
   const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true); setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      const textArea = document.createElement("textarea"); textArea.value = shareUrl;
-      document.body.appendChild(textArea); textArea.select(); document.execCommand("copy");
-      document.body.removeChild(textArea); setCopied(true); setTimeout(() => setCopied(false), 2000);
-    }
+    try { await navigator.clipboard.writeText(shareUrl); setCopied(true); setTimeout(() => setCopied(false), 2000);
+    } catch (err) { const textArea = document.createElement("textarea"); textArea.value = shareUrl; document.body.appendChild(textArea); textArea.select(); document.execCommand("copy"); document.body.removeChild(textArea); setCopied(true); setTimeout(() => setCopied(false), 2000); }
   };
 
   const activeBg = themes[formData.theme as keyof typeof themes]?.bg || themes.sakuraPinkBox.bg;
@@ -117,6 +109,11 @@ export default function CreateLetter() {
 
   return (
     <main className="min-h-screen py-8 px-4 md:py-12 flex justify-center items-center transition-colors duration-1000" style={{ backgroundColor: activeBg }}>
+      {/* Import Font untuk Preview */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Caveat&family=Dancing+Script&family=Indie+Flower&family=Kalam&family=Lora&family=Pacifico&family=Patrick+Hand&family=Playfair+Display&display=swap');
+      `}</style>
+
       <div className="max-w-2xl w-full bg-white/95 backdrop-blur-xl p-6 md:p-8 shadow-2xl rounded-3xl border border-white/40">
         {!isSubmitted ? (
           <>
@@ -128,7 +125,20 @@ export default function CreateLetter() {
                 <div><label className="block text-sm font-medium text-gray-700 mb-1">Untuk (Penerima)</label><input required type="text" className="w-full bg-white/80 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-[#a89575] outline-none transition-shadow" onChange={e => setFormData({...formData, receiver: e.target.value})} /></div>
               </div>
 
-              <div><label className="block text-sm font-medium text-gray-700 mb-1">Isi Surat Puitis</label><textarea required rows={5} placeholder="Gunakan 'Enter' untuk paragraf baru..." className="w-full bg-white/80 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-[#a89575] outline-none transition-shadow" onChange={e => setFormData({...formData, content: e.target.value})} /></div>
+              {/* TYPOGRAPHY / FONT SELECTOR */}
+              <div className="bg-white/60 p-4 rounded-2xl border border-gray-200">
+                <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2"><Eye className="w-4 h-4"/> Pilih Jenis Tulisan</label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-48 overflow-y-auto p-1">
+                  {fontOptions.map(font => (
+                    <div key={font.id} onClick={() => setFormData({...formData, fontFamily: font.id})} className={`p-2 rounded-xl border-2 cursor-pointer transition-all flex flex-col items-center justify-center text-center ${formData.fontFamily === font.id ? 'border-gray-900 bg-gray-50 shadow-md scale-105' : 'border-gray-100 hover:border-gray-300 bg-white'}`}>
+                      <span className="text-2xl text-gray-800 mb-1" style={{ fontFamily: font.id }}>Aa</span>
+                      <span className="text-[10px] text-gray-500 font-sans leading-tight">{font.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div><label className="block text-sm font-medium text-gray-700 mb-1">Isi Surat Puitis</label><textarea required rows={5} placeholder="Gunakan 'Enter' untuk paragraf baru..." className="w-full bg-white/80 border-gray-200 rounded-xl p-3 border focus:ring-2 focus:ring-[#a89575] outline-none transition-shadow" style={{ fontFamily: formData.fontFamily }} onChange={e => setFormData({...formData, content: e.target.value})} /></div>
 
               {/* UPLOAD FOTO & PREVIEW LAYOUT */}
               <div className="bg-white/60 p-4 md:p-5 rounded-2xl border border-gray-200 space-y-4">
@@ -144,11 +154,9 @@ export default function CreateLetter() {
                 <input type="file" accept="image/*" multiple onChange={handlePhotoUpload} disabled={formData.photos.length >= 4} className="text-sm w-full file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-800 file:text-white hover:file:bg-gray-700 cursor-pointer transition-colors" />
                 <p className="text-xs text-gray-500 mt-1">Maksimal 4 foto.</p>
 
-                {/* PREVIEW GALERI DINAMIS MENGIKUTI WARNA TEMA */}
                 {formData.photos.length > 0 && (
                   <div className="mt-6 p-6 rounded-2xl flex flex-col items-center overflow-hidden transition-colors shadow-xl border border-white/20 relative" style={{ backgroundColor: activePreviewColor }}>
                     <div className="flex items-center gap-2 mb-6 text-white/95 text-xs sm:text-sm font-bold tracking-widest uppercase bg-black/20 px-4 py-1.5 rounded-full z-10"><Eye className="w-4 h-4"/> Preview Tema: {themes[formData.theme as keyof typeof themes]?.name.split(' ')[0]}</div>
-                    
                     {formData.photoLayout === 'photobooth' && (<div className="bg-white p-3 shadow-xl rounded-sm w-32 flex flex-col gap-2 rotate-2 relative z-10">{formData.photos.map((src, i) => (<div key={i} className="relative group"><img src={src} className="w-full aspect-[3/4] object-cover bg-gray-100" alt="Preview"/><button type="button" onClick={() => removePhoto(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-3 h-3"/></button></div>))}</div>)}
                     {formData.photoLayout === 'polaroid' && (<div className="flex flex-wrap justify-center gap-4 relative z-10">{formData.photos.map((src, i) => (<div key={i} className={`bg-white p-2 pb-6 shadow-xl w-28 relative group ${i % 2 === 0 ? '-rotate-3' : 'rotate-3'}`}><div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-3 bg-white/50 shadow-sm border border-black/10 rotate-1"></div><img src={src} className="w-full aspect-square object-cover bg-gray-100" alt="Preview"/><button type="button" onClick={() => removePhoto(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-3 h-3"/></button></div>))}</div>)}
                     {formData.photoLayout === 'elegant' && (<div className="flex flex-col gap-4 relative z-10">{formData.photos.map((src, i) => (<div key={i} className="p-1.5 bg-[#fdfbf7] border-2 border-[#a89575] shadow-xl w-36 relative group"><img src={src} className="w-full aspect-auto object-cover" alt="Preview"/><button type="button" onClick={() => removePhoto(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-3 h-3"/></button></div>))}</div>)}

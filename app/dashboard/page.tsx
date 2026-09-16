@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Mail, Clock, CheckCircle2, Trash2, ExternalLink, Send, Plus } from 'lucide-react';
+import { Mail, Clock, CheckCircle2, Trash2, ExternalLink, Send, Plus, Heart, MessageCircleHeart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Dashboard() {
@@ -22,9 +22,10 @@ export default function Dashboard() {
       return;
     }
 
+    // Mengambil tambahan data reply_message dan is_liked dari DB
     const { data, error } = await supabase
       .from('letters')
-      .select('slug, receiver, created_at, opened_at, theme')
+      .select('slug, receiver, created_at, opened_at, theme, reply_message, is_liked')
       .in('slug', savedSlugs)
       .order('created_at', { ascending: false });
 
@@ -88,7 +89,7 @@ export default function Dashboard() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group"
+                  className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group flex flex-col"
                 >
                   <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-pink-50 to-transparent rounded-bl-3xl -z-0"></div>
                   
@@ -108,7 +109,7 @@ export default function Dashboard() {
                     )}
                   </div>
 
-                  <div className="space-y-2 mb-6">
+                  <div className="space-y-2 mb-4 flex-1">
                     <div className="text-sm text-gray-500 flex items-center gap-2">
                       <span className="w-20">Dibuat:</span> 
                       <span className="text-gray-800 font-medium">{formatDate(letter.created_at)}</span>
@@ -123,9 +124,26 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-4 border-t border-gray-100">
+                  {/* MENAMPILKAN BALASAN DARI PENERIMA (REPLY & LIKE) */}
+                  {(letter.is_liked || letter.reply_message) && (
+                    <div className="mb-6 bg-pink-50/50 border border-pink-100 rounded-xl p-3 relative z-10">
+                      {letter.is_liked && (
+                        <div className="flex items-center gap-2 text-xs font-bold text-pink-600 mb-2 border-b border-pink-100 pb-2">
+                          <Heart className="w-4 h-4 fill-pink-500" /> {letter.receiver} menyukai kejutan ini!
+                        </div>
+                      )}
+                      {letter.reply_message && (
+                        <div className="text-sm text-gray-700">
+                          <div className="flex items-center gap-1 text-xs text-pink-400 font-bold mb-1"><MessageCircleHeart className="w-3 h-3" /> Balasan:</div>
+                          <p className="italic font-medium text-gray-800">"{letter.reply_message}"</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex gap-2 pt-4 border-t border-gray-100 relative z-10 mt-auto">
                     <a href={`/${letter.slug}`} target="_blank" rel="noopener noreferrer" className="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 py-2.5 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors text-sm">
-                      <ExternalLink className="w-4 h-4" /> Buka
+                      <ExternalLink className="w-4 h-4" /> Buka Tautan
                     </a>
                     <button onClick={() => deleteLetter(letter.slug)} className="bg-red-50 hover:bg-red-100 text-red-600 p-2.5 rounded-xl transition-colors">
                       <Trash2 className="w-5 h-5" />
