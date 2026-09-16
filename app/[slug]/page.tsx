@@ -319,12 +319,13 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                             {/* MULTI-PLATFORM MUSIC PLAYER */}
                   {/* ================================================== */}
                       {playlist.length > 0 && currentTrack && (
-                      <div className="bg-[#121212] p-4 rounded-3xl shadow-lg text-white mt-6">
+                     <div className="bg-[#121212] p-4 rounded-3xl shadow-lg text-white mt-6 relative z-10">
                           <h3 className="font-bold text-lg mb-3 px-2">🎵 Playlist Spesial Untukmu</h3>
     
                       {/* Layar Iframe untuk memutar lagu */}
          <div className="mb-4 w-full h-[160px] rounded-xl overflow-hidden shadow-md bg-black">
            <iframe 
+           key={currentTrack.id}
         src={currentTrack.embedUrl} 
         width="100%" height="100%" frameBorder="0" 
         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
