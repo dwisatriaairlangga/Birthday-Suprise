@@ -6,13 +6,19 @@ import { supabase } from '@/lib/supabase';
 
 // DAFTAR TEMA DENGAN DETAIL WARNA UNTUK VISUAL CARD
 const themes = {
-  // Tema Baru (Secret Box)
+  // --- OPSI KOTAK (BOX 3D) ---
   secretBoxPurple: { name: 'Secret Box (Purple)', bg: '#F8E1E1', preview: '#6A417B', badge: 'Kotak 🎁' },
-  // Tema Baru
+  sakuraPinkBox: { name: 'Sakura Anime (Kotak)', bg: '#FFF4F7', preview: '#E85D88', badge: 'Kotak 🎁' },
+  oceanBlueBox: { name: 'Ocean Nature (Kotak)', bg: '#E3F2FD', preview: '#1565C0', badge: 'Kotak 🎁' },
+  
+  // --- OPSI SURAT (ENVELOPE KLASIK) ---
+  sakuraPink: { name: 'Sakura Anime (Surat)', bg: '#FFF4F7', preview: '#E85D88', badge: 'Surat ✉️' },
+  oceanBlue: { name: 'Ocean Nature (Surat)', bg: '#E3F2FD', preview: '#1565C0', badge: 'Surat ✉️' },
+  
+  // --- TEMA REGULER ---
   dalkomBlue: { name: 'Dalkom (Royal Blue)', bg: '#FCF1DD', preview: '#2945A8', badge: 'Baru ✨' },
   matchaPink: { name: 'Matcha (Green & Pink)', bg: '#FADADD', preview: '#7C9D70', badge: 'Baru ✨' },
   lilacBubblegum: { name: 'MiniMaisy (Lilac)', bg: '#FFC0CB', preview: '#C8A2C8', badge: 'Baru ✨' },
-  // Tema Klasik
   scrapbookBlue: { name: 'Scrapbook Denim', bg: '#F2E8D9', preview: '#5A80A6', badge: 'Klasik' },
   dustyNavy: { name: 'Dusty Pink & Navy', bg: '#DDAEB2', preview: '#1A2E46', badge: 'Klasik' },
   oliveGold: { name: 'Olive & Gold', bg: '#DDB24A', preview: '#595F37', badge: 'Klasik' },
@@ -28,7 +34,7 @@ const themes = {
 export default function CreateLetter() {
   const [formData, setFormData] = useState({
     sender: '', receiver: '', content: '', giftType: 'confetti',
-    theme: 'secretBoxPurple', accessory: 'pita', giftMessage: '',
+    theme: 'sakuraPinkBox', accessory: 'pita', giftMessage: '',
     photos: [] as string[],
     photoLayout: 'polaroid',
     wallMessages: [] as { name: string, message: string }[],
@@ -106,8 +112,8 @@ export default function CreateLetter() {
     }
   };
 
-  const activeBg = themes[formData.theme as keyof typeof themes]?.bg || themes.dalkomBlue.bg;
-  const activePreviewColor = themes[formData.theme as keyof typeof themes]?.preview || '#000000';
+  const activeBg = themes[formData.theme as keyof typeof themes]?.bg || themes.sakuraPinkBox.bg;
+  const activePreviewColor = themes[formData.theme as keyof typeof themes]?.preview || '#E85D88';
 
   return (
     <main className="min-h-screen py-8 px-4 md:py-12 flex justify-center items-center transition-colors duration-1000" style={{ backgroundColor: activeBg }}>

@@ -6,22 +6,31 @@ import confetti from 'canvas-confetti';
 import html2canvas from 'html2canvas';
 import { supabase } from '@/lib/supabase';
 
-// TEMA DENGAN ACCENT COLOR
+// TEMA DENGAN ACCENT COLOR & WARNA KOTAK (JIKA BOX)
 const themes = {
-  secretBoxPurple: { name: 'Secret Box (Purple)', bg: '#F8E1E1', envelope: '#6A417B', text: 'text-white', accent: '#D5558B' },
-  dalkomBlue: { bg: '#FCF1DD', envelope: '#2945A8', text: 'text-white', accent: '#F78660' },
-  matchaPink: { bg: '#FADADD', envelope: '#7C9D70', text: 'text-white', accent: '#FDF5C9' },
-  lilacBubblegum: { bg: '#FFC0CB', envelope: '#C8A2C8', text: 'text-white', accent: '#FFF0F5' },
-  scrapbookBlue: { bg: '#F2E8D9', envelope: '#5A80A6', text: 'text-white', accent: '#F29CB0' },
-  dustyNavy: { bg: '#DDAEB2', envelope: '#1A2E46', text: 'text-white', accent: '#DDB24A' },
-  oliveGold: { bg: '#DDB24A', envelope: '#595F37', text: 'text-white', accent: '#F3E6D6' },
-  plumCream: { bg: '#F3E6D6', envelope: '#4F2C3A', text: 'text-white', accent: '#DDAEB2' },
-  orangeTeal: { bg: '#245D63', envelope: '#CA5B31', text: 'text-white', accent: '#EAE1CC' },
-  forestSand: { bg: '#EAE1CC', envelope: '#1D5139', text: 'text-white', accent: '#D3A95B' },
-  burgundyGold: { bg: '#D3A95B', envelope: '#6C1226', text: 'text-white', accent: '#F2E8D9' },
-  turquoiseCoral: { bg: '#F27E6A', envelope: '#007F86', text: 'text-white', accent: '#F2E8D9' },
-  lavenderSlate: { bg: '#585966', envelope: '#C1A8C5', text: 'text-gray-900', accent: '#DDAEB2' },
-  deepGreenBlush: { bg: '#F1CAD0', envelope: '#0B4A31', text: 'text-white', accent: '#F2E8D9' },
+  // --- TEMA KOTAK (BOX) ---
+  secretBoxPurple: { bg: '#F8E1E1', envelope: '#6A417B', text: 'text-white', accent: '#D5558B', boxInside: '#3E234A', boxLid: '#7F5192', boxBorder: '#4B2A59', boxBaseBorder: '#5A3568' },
+  sakuraPinkBox: { bg: '#FFF4F7', envelope: '#E85D88', text: 'text-white', accent: '#F28CA8', boxInside: '#8A2B47', boxLid: '#F27B9F', boxBorder: '#BA4366', boxBaseBorder: '#C94B72' },
+  oceanBlueBox: { bg: '#E3F2FD', envelope: '#1565C0', text: 'text-white', accent: '#4BA1D8', boxInside: '#082759', boxLid: '#2196F3', boxBorder: '#0D47A1', boxBaseBorder: '#115293' },
+  
+  // --- TEMA SURAT (ENVELOPE) ---
+  sakuraPink: { bg: '#FFF4F7', envelope: '#E85D88', text: 'text-white', accent: '#F28CA8', boxInside: '#8A2B47', boxLid: '#F27B9F', boxBorder: '#BA4366', boxBaseBorder: '#C94B72' },
+  oceanBlue: { bg: '#E3F2FD', envelope: '#1565C0', text: 'text-white', accent: '#4BA1D8', boxInside: '#082759', boxLid: '#2196F3', boxBorder: '#0D47A1', boxBaseBorder: '#115293' },
+  
+  // --- TEMA REGULER ---
+  dalkomBlue: { bg: '#FCF1DD', envelope: '#2945A8', text: 'text-white', accent: '#F78660', boxInside: '#1C2F7A', boxLid: '#3C5DCC', boxBorder: '#223A96', boxBaseBorder: '#263F9E' },
+  matchaPink: { bg: '#FADADD', envelope: '#7C9D70', text: 'text-white', accent: '#FDF5C9', boxInside: '#5F7B4C', boxLid: '#96B77B', boxBorder: '#4D6F43', boxBaseBorder: '#597A4D' },
+  lilacBubblegum: { bg: '#FFC0CB', envelope: '#C8A2C8', text: 'text-white', accent: '#FFF0F5', boxInside: '#9C7AA5', boxLid: '#D9B5DE', boxBorder: '#8A6496', boxBaseBorder: '#9370A3' },
+  scrapbookBlue: { bg: '#F2E8D9', envelope: '#5A80A6', text: 'text-white', accent: '#F29CB0', boxInside: '#355C7D', boxLid: '#7EA3C0', boxBorder: '#2E4E6A', boxBaseBorder: '#3B5F82' },
+  dustyNavy: { bg: '#DDAEB2', envelope: '#1A2E46', text: 'text-white', accent: '#DDB24A', boxInside: '#111F31', boxLid: '#2E496C', boxBorder: '#16293E', boxBaseBorder: '#1A314F' },
+  oliveGold: { bg: '#DDB24A', envelope: '#595F37', text: 'text-white', accent: '#F3E6D6', boxInside: '#3E4328', boxLid: '#7B8052', boxBorder: '#2E3822', boxBaseBorder: '#3B422C' },
+  plumCream: { bg: '#F3E6D6', envelope: '#4F2C3A', text: 'text-white', accent: '#DDAEB2', boxInside: '#2F1A24', boxLid: '#7A495E', boxBorder: '#2B1720', boxBaseBorder: '#3B2331' },
+  orangeTeal: { bg: '#245D63', envelope: '#CA5B31', text: 'text-white', accent: '#EAE1CC', boxInside: '#12454D', boxLid: '#E06D43', boxBorder: '#9F3A21', boxBaseBorder: '#BE4F2B' },
+  forestSand: { bg: '#EAE1CC', envelope: '#1D5139', text: 'text-white', accent: '#D3A95B', boxInside: '#123C2D', boxLid: '#2F7759', boxBorder: '#0E2E24', boxBaseBorder: '#184E3E' },
+  burgundyGold: { bg: '#D3A95B', envelope: '#6C1226', text: 'text-white', accent: '#F2E8D9', boxInside: '#450E1B', boxLid: '#842234', boxBorder: '#3E0A16', boxBaseBorder: '#561625' },
+  turquoiseCoral: { bg: '#F27E6A', envelope: '#007F86', text: 'text-white', accent: '#F2E8D9', boxInside: '#005E63', boxLid: '#1AA1A7', boxBorder: '#00515B', boxBaseBorder: '#006972' },
+  lavenderSlate: { bg: '#585966', envelope: '#C1A8C5', text: 'text-gray-900', accent: '#DDAEB2', boxInside: '#484B5B', boxLid: '#CDB4D1', boxBorder: '#6A6473', boxBaseBorder: '#7B7382' },
+  deepGreenBlush: { bg: '#F1CAD0', envelope: '#0B4A31', text: 'text-white', accent: '#F2E8D9', boxInside: '#0A3627', boxLid: '#2C7D64', boxBorder: '#0B2F25', boxBaseBorder: '#154D3F' },
 };
 
 const getEmbedData = (url: string) => {
@@ -196,6 +205,9 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
   const activeTheme = themes[data.theme as keyof typeof themes] || themes.scrapbookBlue;
   const isDarkScene = stage === 'gift' && data.giftType === 'bungaTumbuh';
   const paragraphs = data.content ? data.content.split('\n').filter((p: string) => p.trim() !== '') : [];
+  
+  // PENGECEKAN APAKAH TEMA MENGGUNAKAN BOX 3D
+  const isBoxTheme = data.theme.includes('Box');
 
   return (
     <main 
@@ -242,8 +254,8 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
             <AnimatePresence>
               {stage === 'envelope' && (
                 <>
-                  {data.theme === 'secretBoxPurple' ? (
-                    // TAMPILAN KHUSUS: SECRET BOX UNGU 3D-ish
+                  {isBoxTheme ? (
+                    // --- TAMPILAN KHUSUS: SECRET BOX 3D DINAMIS MENGIKUTI WARNA TEMA ---
                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0, y: -50 }} className="flex flex-col items-center cursor-pointer z-20 group" onClick={openEnvelope}>
                       <div className="relative w-64 h-56 sm:w-72 sm:h-64 flex items-end justify-center transition-transform hover:scale-105">
                         
@@ -251,39 +263,40 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                         <div className="absolute bottom-0 w-48 h-10 bg-black/20 blur-xl rounded-full"></div>
 
                         {/* Interior kotak (Kertas surat yang menyembul) */}
-                        <div className="absolute bottom-16 w-52 sm:w-60 h-28 bg-[#3E234A] rounded-t-md z-0 overflow-hidden flex items-end justify-center">
+                        <div className="absolute bottom-16 w-52 sm:w-60 h-28 rounded-t-md z-0 overflow-hidden flex items-end justify-center" style={{ backgroundColor: (activeTheme as any).boxInside || '#3E234A' }}>
                            <div className="w-40 h-20 bg-white/95 rounded-t-md translate-y-4 group-hover:translate-y-1 transition-transform duration-500 shadow-inner">
                              <div className="w-full h-4 border-b-2 border-dashed border-gray-300 mt-2"></div>
                            </div>
                         </div>
 
                         {/* Tutup Kotak (Lid) - Terbuka saat hover */}
-                        <div className="absolute top-6 sm:top-8 w-60 sm:w-68 h-20 sm:h-24 bg-[#7F5192] rounded-sm shadow-2xl z-20 transition-all duration-700 group-hover:-translate-y-12 group-hover:-rotate-3 flex flex-col items-center justify-center border-b-8 border-[#4B2A59]">
-                           <Sparkles className="w-6 h-6 text-pink-300 absolute top-2 right-2 opacity-50" />
+                        <div className="absolute top-6 sm:top-8 w-60 sm:w-68 h-20 sm:h-24 rounded-sm shadow-2xl z-20 transition-all duration-700 group-hover:-translate-y-12 group-hover:-rotate-3 flex flex-col items-center justify-center border-b-8" style={{ backgroundColor: activeTheme.boxLid, borderColor: activeTheme.boxBorder }}>
+                           <Sparkles className="w-6 h-6 text-white/50 absolute top-2 right-2 opacity-50" />
                            <span className="text-white font-serif font-black text-2xl tracking-widest opacity-90 drop-shadow-md">Secret Box</span>
                         </div>
 
                         {/* Dasar Kotak */}
-                        <div className="w-56 sm:w-64 h-32 sm:h-36 bg-[#6A417B] rounded-b-xl shadow-xl relative z-10 flex items-center justify-center border-t-4 border-[#5A3568]">
+                        <div className="w-56 sm:w-64 h-32 sm:h-36 rounded-b-xl shadow-xl relative z-10 flex items-center justify-center border-t-4" style={{ backgroundColor: activeTheme.envelope, borderColor: activeTheme.boxBaseBorder }}>
                           <Heart className="w-10 h-10 text-white/10" />
-                          <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 text-white/60 drop-shadow-md z-10">
-                            {/* Mempertahankan Aksesoris Pengirim Jika Ada */}
-                            {data.accessory === 'waxseal' && <Droplet className="w-7 h-7 text-red-400" fill="currentColor" />}
-                            {data.accessory === 'pita' && <Ribbon className="w-7 h-7 text-pink-300" />}
-                            {data.accessory === 'bunga' && <Flower2 className="w-7 h-7" />}
-                            {data.accessory === 'prangko' && <Stamp className="w-7 h-7" />}
-                            {data.accessory === 'kunci' && <Key className="w-7 h-7 text-yellow-400" />}
-                            {data.accessory === 'feather' && <Feather className="w-7 h-7" />}
-                            {data.accessory === 'sparkles' && <Sparkles className="w-7 h-7 text-yellow-300" />}
-                            {data.accessory === 'heart' && <Heart className="w-7 h-7 text-rose-400" fill="currentColor" />}
-                            {data.accessory === 'paperclip' && <Paperclip className="w-7 h-7" />}
+                          
+                          {/* Aksesoris Ornamen yang Dipilih Pengirim */}
+                          <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 text-white/90 drop-shadow-md z-10">
+                            {data.accessory === 'waxseal' && <Droplet className="w-8 h-8 text-red-400" fill="currentColor" />}
+                            {data.accessory === 'pita' && <Ribbon className="w-9 h-9 text-white" fill="currentColor" />}
+                            {data.accessory === 'bunga' && <Flower2 className="w-8 h-8 text-pink-200" />}
+                            {data.accessory === 'prangko' && <Stamp className="w-8 h-8 text-white" />}
+                            {data.accessory === 'kunci' && <Key className="w-8 h-8 text-yellow-300" />}
+                            {data.accessory === 'feather' && <Feather className="w-8 h-8 text-white" />}
+                            {data.accessory === 'sparkles' && <Sparkles className="w-8 h-8 text-yellow-300" />}
+                            {data.accessory === 'heart' && <Heart className="w-9 h-9 text-rose-400" fill="currentColor" />}
+                            {data.accessory === 'paperclip' && <Paperclip className="w-8 h-8 text-white" />}
                           </div>
                         </div>
                       </div>
-                      <p className={`mt-6 sm:mt-8 font-serif text-base sm:text-lg text-purple-900 text-center font-bold animate-pulse mix-blend-difference`}>Ketuk untuk membuka</p>
+                      <p className={`mt-6 sm:mt-8 font-serif text-base sm:text-lg text-center font-bold animate-pulse mix-blend-difference`} style={{ color: activeTheme.envelope }}>Ketuk untuk membuka</p>
                     </motion.div>
                   ) : (
-                    // TAMPILAN KLASIK: AMPLOP BIASA UNTUK TEMA LAINNYA
+                    // --- TAMPILAN KLASIK: AMPLOP BIASA UNTUK TEMA SURAT ---
                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.1, opacity: 0, y: -50 }} className="flex flex-col items-center cursor-pointer z-20 group" onClick={openEnvelope}>
                       <div className="w-64 h-44 sm:w-72 sm:h-52 rounded-xl shadow-2xl relative flex items-center justify-center transition-transform group-hover:scale-105" style={{ backgroundColor: activeTheme.envelope }}>
                         <div className="absolute top-2 right-2 sm:top-3 sm:right-3 text-white/60 drop-shadow-md z-10">
