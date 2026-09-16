@@ -94,26 +94,47 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
   const [embed, setEmbed] = useState<{type: string, url: string} | null>(null);
   const [fallingFlowers, setFallingFlowers] = useState<{id: number, x: number, emoji: string}[]>([]);
   const [growingFlowers, setGrowingFlowers] = useState<{id: number, x: number, delay: number, type: 'tulip' | 'blossom', size: number}[]>([]);
-
+  const [playlist, setPlaylist] = useState<any[]>([]);
+  const [currentTrack, setCurrentTrack] = useState<any>(null);
   useEffect(() => {
     async function fetchLetter() {
       const { data: dbData, error } = await supabase.from('letters').select('*').eq('slug', slug).single();
+
       if (error || !dbData) {
-        setData({ error: true }); setLoadingScreen(false);
-      } else {
-        setData({
-          sender: dbData.sender, receiver: dbData.receiver, content: dbData.content,
-          theme: dbData.theme, accessory: dbData.accessory, giftType: dbData.gift_type, giftMessage: dbData.gift_message,
-          fontFamily: dbData.font_family || 'Playfair Display', photos: dbData.photos || [], photoLayout: dbData.photo_layout || 'polaroid',
-          wallMessages: dbData.wall_messages || [], pin: dbData.pin, playlist: dbData.playlist, opened_at: dbData.opened_at
-        });
-        setIsLiked(dbData.is_liked || false);
-        if (dbData.reply_message) setIsReplySent(true);
-        if (dbData.playlist?.tracks?.length > 0) setEmbed(getEmbedData(dbData.playlist.tracks[0].url));
-        if (dbData.pin) setIsLocked(true);
-        setTimeout(() => setLoadingScreen(false), 2000);
+        setData({ error: true });
+        setLoadingScreen(false);
+        return;
       }
+
+      const letterData = {
+        sender: dbData.sender,
+        receiver: dbData.receiver,
+        content: dbData.content,
+        theme: dbData.theme,
+        accessory: dbData.accessory,
+        giftType: dbData.gift_type,
+        giftMessage: dbData.gift_message,
+        fontFamily: dbData.font_family || 'Playfair Display',
+        photos: dbData.photos || [],
+        photoLayout: dbData.photo_layout || 'polaroid',
+        wallMessages: dbData.wall_messages || [],
+        pin: dbData.pin,
+        playlist: dbData.playlist,
+        opened_at: dbData.opened_at,
+      };
+
+      setData(letterData);
+      setIsLiked(dbData.is_liked || false);
+      if (dbData.reply_message) setIsReplySent(true);
+      if (dbData.playlist?.tracks?.length > 0) setEmbed(getEmbedData(dbData.playlist.tracks[0].url));
+      if (dbData.pin) setIsLocked(true);
+      if (dbData.playlist?.tracks?.length > 0) {
+        setPlaylist(dbData.playlist.tracks);
+        setCurrentTrack(dbData.playlist.tracks[0]);
+      }
+      setTimeout(() => setLoadingScreen(false), 2000);
     }
+
     fetchLetter();
   }, [slug]);
 
@@ -294,6 +315,52 @@ export default function LetterPage({ params }: { params: Promise<{ slug: string 
                       </div>
                     )}
                   </div>
+                  {/* ================================================== */}
+                            {/* MULTI-PLATFORM MUSIC PLAYER */}
+                  {/* ================================================== */}
+                      {playlist.length > 0 && currentTrack && (
+                      <div className="bg-[#121212] p-4 rounded-3xl shadow-lg text-white mt-6">
+                          <h3 className="font-bold text-lg mb-3 px-2">🎵 Playlist Spesial Untukmu</h3>
+    
+                      {/* Layar Iframe untuk memutar lagu */}
+         <div className="mb-4 w-full h-[160px] rounded-xl overflow-hidden shadow-md bg-black">
+           <iframe 
+        src={currentTrack.embedUrl} 
+        width="100%" height="100%" frameBorder="0" 
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+        allowFullScreen
+      ></iframe>
+    </div>
+
+    {/* Daftar Lagu (Bisa diklik untuk ganti lagu) */}
+    <div className="space-y-1">
+      {playlist.map((track, index) => {
+        const isPlaying = currentTrack.id === track.id;
+        return (
+          <div 
+            key={track.id}
+            onClick={() => setCurrentTrack(track)}
+            className={`flex items-center gap-4 p-2 rounded-lg cursor-pointer transition-colors duration-200 ${isPlaying ? 'bg-white/10' : 'hover:bg-white/5'}`}
+          >
+            {/* Indikator Play / Nomor Lagu */}
+            <span className={`w-4 text-center text-sm font-medium ${isPlaying ? 'text-green-500' : 'text-gray-400'}`}>
+              {isPlaying ? '▶' : index + 1}
+            </span>
+            
+            {/* Gambar Cover */}
+            <img src={track.cover || 'https://via.placeholder.com/150'} alt={track.title} className="w-12 h-12 rounded object-cover shadow bg-gray-800" />
+            
+            {/* Info Judul & Artis */}
+            <div className="flex-1 overflow-hidden">
+              <p className={`font-semibold truncate ${isPlaying ? 'text-green-500' : 'text-gray-100'}`}>{track.title}</p>
+              <p className="text-sm text-gray-400 truncate">{track.artist}</p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
 
                   <div className="flex flex-col gap-3 w-full px-2 max-w-sm mx-auto">
                     <motion.button onClick={triggerGift} className="w-full px-8 py-4 bg-white text-gray-800 rounded-full font-bold shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2">
