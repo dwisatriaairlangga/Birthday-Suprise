@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   return {
     title: `Kejutan Spesial untuk ${receiverName} 🎁`,
-    description: `Seseorang telah membuatkan sebuah ${isBox ? 'Kotak Rahasia' : 'Surat Spesial'} khusus untukmu. Buka tautan ini untuk melihatnya!`,
+    description: `Hai, Kau mendapatkan sebuah ${isBox ? 'Kotak Rahasia' : 'Surat Spesial'} Nih!`,
     openGraph: {
       title: `Kejutan Spesial untuk ${receiverName} 🎁`,
       description: `Ada ${isBox ? 'Kotak Rahasia' : 'Surat Spesial'} yang menunggumu. Buka sekarang!`,
